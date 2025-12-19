@@ -1,0 +1,8 @@
+{
+  "name": "Havilah Lash Studio",
+  "description": "A premium lash extension studio app featuring AI consultancy, style catalog, and booking management.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}

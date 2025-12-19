@@ -1,8 +1,18 @@
-import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { LASH_MODELS } from '../constants';
 
-const apiKey = process.env.API_KEY || '';
-const ai = new GoogleGenAI({ apiKey });
+// 1. Usa o nome correto da variável que definimos na Vercel e no .env
+const API_KEY = process.env.GEMINI_API_KEY || '';
+
+if (!API_KEY) {
+  console.error("ERRO CRÍTICO: GEMINI_API_KEY não encontrada. Verifique o .env ou as configurações da Vercel.");
+}
+
+// 2. Inicializa o SDK padrão do Google
+const genAI = new GoogleGenerativeAI(API_KEY);
+
+// Configuração do Modelo (Usando o 1.5 Flash que é rápido e estável)
+const MODEL_NAME = "gemini-1.5-flash";
 
 const SYSTEM_INSTRUCTION_CHAT = `
 You are the virtual assistant for Havilah Lash Studio, a premium luxury lash extension salon by Rebecca Havilah.
@@ -12,6 +22,7 @@ You explain aftercare procedures (washing with neutral soap, brushing, avoiding 
 You encourage booking but do not process payments directly.
 Always maintain a 'premium service' persona. Use formatting like bullet points for clarity.
 If asked about prices, you can mention ranges but encourage checking the 'Valores' section for specifics.
+Short answers are preferred.
 `;
 
 const SYSTEM_INSTRUCTION_CONSULTANCY = `
@@ -29,62 +40,61 @@ Format your response exactly as follows:
 Keep the tone highly professional, flattering, and technical yet accessible. Portuguese language only.
 `;
 
+// --- FUNÇÃO DO CHAT (ASSISTENTE) ---
 export const sendMessageToGemini = async (history: { role: string, text: string }[], message: string): Promise<string> => {
   try {
-    const model = 'gemini-3-flash-preview';
+    const model = genAI.getGenerativeModel({ 
+      model: MODEL_NAME,
+      systemInstruction: SYSTEM_INSTRUCTION_CHAT
+    });
     
-    // Map the simplified history to the Content format expected by the SDK
+    // Converte o histórico para o formato que o Google espera
+    // O Google espera 'user' ou 'model'. Se o teu app usa outros nomes, ajusta aqui.
     const formattedHistory = history.map(msg => ({
-      role: msg.role,
+      role: msg.role === 'me' ? 'user' : (msg.role === 'model' ? 'model' : 'user'),
       parts: [{ text: msg.text }]
     }));
 
-    const chat = ai.chats.create({
-      model,
-      config: {
-        systemInstruction: SYSTEM_INSTRUCTION_CHAT,
-      },
-      history: formattedHistory
+    const chat = model.startChat({
+      history: formattedHistory,
     });
     
-    const response: GenerateContentResponse = await chat.sendMessage({
-      message: message
-    });
+    const result = await chat.sendMessage(message);
+    const response = await result.response;
+    return response.text();
 
-    return response.text || "Desculpe, não consegui processar sua solicitação no momento.";
   } catch (error) {
     console.error("Gemini Chat Error:", error);
-    return "Ocorreu um erro ao conectar com a assistente. Tente novamente.";
+    return "Desculpe, estou com uma instabilidade momentânea. Poderia tentar novamente? ✨";
   }
 };
 
+// --- FUNÇÃO DA CONSULTORIA (VISÃO) ---
 export const analyzeImageForConsultancy = async (base64Image: string): Promise<string> => {
   try {
-    const model = 'gemini-3-flash-preview';
-    
-    const response: GenerateContentResponse = await ai.models.generateContent({
-      model,
-      contents: {
-        parts: [
-          {
-            inlineData: {
-              mimeType: 'image/jpeg', // Assuming jpeg for simplicity
-              data: base64Image
-            }
-          },
-          {
-            text: "Analise este rosto e recomende o melhor estilo de cílios do catálogo Havilah."
-          }
-        ]
-      },
-      config: {
-        systemInstruction: SYSTEM_INSTRUCTION_CONSULTANCY,
-      }
+    const model = genAI.getGenerativeModel({ 
+      model: MODEL_NAME,
+      systemInstruction: SYSTEM_INSTRUCTION_CONSULTANCY
     });
+    
+    // Limpa o cabeçalho do base64 se vier (ex: "data:image/jpeg;base64,")
+    const cleanBase64 = base64Image.split(',')[1] || base64Image;
 
-    return response.text || "Não foi possível analisar a imagem.";
+    const prompt = "Analise este rosto e recomende o melhor estilo de cílios do catálogo Havilah.";
+    
+    const imagePart = {
+      inlineData: {
+        data: cleanBase64,
+        mimeType: "image/jpeg",
+      },
+    };
+
+    const result = await model.generateContent([prompt, imagePart]);
+    const response = await result.response;
+    return response.text();
+
   } catch (error) {
     console.error("Gemini Vision Error:", error);
-    return "Erro ao analisar a imagem. Por favor, verifique sua conexão ou tente outra foto.";
+    return "Não consegui analisar a imagem. Tente uma foto com melhor iluminação. ✨";
   }
 };

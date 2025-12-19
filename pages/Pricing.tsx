@@ -5,6 +5,8 @@ import { AppRoute, LashModel } from '../types';
 import { Check, Edit2, Loader2, Plus, Trash2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { LASH_MODELS } from '../constants';
+// 1. IMPORTANTE: Importamos o contexto de autenticação
+import { useAuth } from '../contexts/AuthContext';
 
 interface AdditionalService {
   id: string;
@@ -14,6 +16,8 @@ interface AdditionalService {
 
 const Pricing: React.FC = () => {
   const navigate = useNavigate();
+  // 2. IMPORTANTE: Pegamos a informação do usuário logado
+  const { user } = useAuth();
   
   const [models, setModels] = useState<LashModel[]>([]);
   const [additionalServices, setAdditionalServices] = useState<AdditionalService[]>([]);
@@ -92,7 +96,6 @@ const Pricing: React.FC = () => {
 
   const handlePriceChange = (id: string, field: 'price' | 'maintenancePrice', value: string) => {
     const numValue = parseFloat(value);
-    // Allow empty for maintenance price if clearing it
     if (isNaN(numValue) && value !== '') return;
     setModels(prev => prev.map(m => m.id === id ? { ...m, [field]: value === '' ? undefined : numValue } : m));
   };
@@ -103,7 +106,6 @@ const Pricing: React.FC = () => {
     setAdditionalServices(prev => prev.map(s => s.id === id ? { ...s, price: numValue } : s));
   };
 
-  // Helper to check if ID is a valid UUID (approximate check)
   const isUUID = (id: string) => id.length === 36 && id.includes('-');
 
   const saveChanges = async () => {
@@ -144,7 +146,7 @@ const Pricing: React.FC = () => {
       }
 
       setIsEditMode(false);
-      await fetchData(); // Refresh to get the new UUIDs
+      await fetchData();
       alert("Alterações salvas com sucesso!");
 
     } catch (e) {
@@ -166,14 +168,17 @@ const Pricing: React.FC = () => {
         </div>
 
         <div className="flex gap-2 w-full md:w-auto justify-center md:justify-end">
-           <Button 
-             variant={isEditMode ? "primary" : "outline"}
-             onClick={() => isEditMode ? saveChanges() : setIsEditMode(true)}
-             disabled={isSaving}
-             className="!py-2 !px-4 flex items-center gap-2 text-sm"
-           >
-             {isSaving ? <Loader2 className="animate-spin" size={16} /> : isEditMode ? <><Check size={16} /> Salvar</> : <><Edit2 size={16} /> Editar Preços</>}
-           </Button>
+           {/* 3. IMPORTANTE: O botão só aparece SE 'user' existir */}
+           {user && (
+             <Button 
+               variant={isEditMode ? "primary" : "outline"}
+               onClick={() => isEditMode ? saveChanges() : setIsEditMode(true)}
+               disabled={isSaving}
+               className="!py-2 !px-4 flex items-center gap-2 text-sm"
+             >
+               {isSaving ? <Loader2 className="animate-spin" size={16} /> : isEditMode ? <><Check size={16} /> Salvar</> : <><Edit2 size={16} /> Editar Preços</>}
+             </Button>
+           )}
         </div>
       </header>
 
@@ -196,7 +201,8 @@ const Pricing: React.FC = () => {
             </div>
             
             <div className="col-span-3 md:col-span-3 text-right text-havilah-white flex justify-end text-sm md:text-base">
-              {isEditMode ? (
+              {/* Só permite editar se o modo de edição estiver ativo E o usuário logado (redundância de segurança) */}
+              {isEditMode && user ? (
                 <div className="flex items-center gap-1 justify-end w-full">
                   <input 
                     type="number" 
@@ -211,7 +217,7 @@ const Pricing: React.FC = () => {
             </div>
             
             <div className="col-span-3 md:col-span-4 text-right text-havilah-champagne/70 flex justify-end text-sm md:text-base">
-              {isEditMode ? (
+              {isEditMode && user ? (
                 <div className="flex items-center gap-1 justify-end w-full">
                   <input 
                     type="number" 
@@ -251,7 +257,7 @@ const Pricing: React.FC = () => {
               <li key={service.id} className="flex justify-between items-center text-sm border-b border-havilah-gold/5 pb-3 last:border-0">
                 <span className="text-havilah-champagne pr-2">{service.name}</span>
                 <span className="text-havilah-gold font-medium whitespace-nowrap">
-                  {isEditMode ? (
+                  {isEditMode && user ? (
                     <div className="flex items-center gap-1 justify-end">
                       <span className="text-xs">R$</span>
                       <input 

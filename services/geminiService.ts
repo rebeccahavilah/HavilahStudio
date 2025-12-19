@@ -93,4 +93,4 @@ export const analyzeImageForConsultancy = async (base64Image: string): Promise<s
     console.error("Erro Visão:", error);
     return "Não foi possível analisar a imagem.";
   }
-};
+}; // Forçando atualização v2 

@@ -13,19 +13,6 @@ export interface LashModel {
   active?: boolean;
 }
 
-export interface UserProfile {
-  id: string; // UUID of the profile row
-  user_id: string; // Auth User ID
-  email: string;
-  full_name: string;
-  avatar_url?: string;
-  vip_stars: number;
-  eye_shape?: string;
-  style_preference?: string;
-  experience_level?: string;
-  created_at?: string;
-}
-
 export interface ChatMessage {
   id: string;
   role: 'user' | 'model';
@@ -46,14 +33,10 @@ export enum LashStyleId {
 
 export enum AppRoute {
   WELCOME = '/',
-  LOGIN = '/login',
-  REGISTER = '/register',
-  ONBOARDING = '/onboarding',
   DASHBOARD = '/dashboard',
   PRICING = '/valores',
   BOOKING = '/agendamento',
   CONSULTANCY = '/consultoria',
   CARE = '/cuidados',
-  PROFILE = '/perfil',
   CHAT = '/chat-ai',
 }

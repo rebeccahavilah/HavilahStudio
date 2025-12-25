@@ -1,10 +1,9 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppRoute } from '../types';
 import { Star, Calendar, MessageCircle } from 'lucide-react';
 
-const Dashboard: React.FC = () => {
+export default function Dashboard() {
   const navigate = useNavigate();
 
   return (
@@ -52,5 +51,3 @@ const Dashboard: React.FC = () => {
     </div>
   );
 };
-
-export default Dashboard;

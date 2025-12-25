@@ -5,13 +5,13 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   fullWidth?: boolean;
 }
 
-export const Button: React.FC<ButtonProps> = ({ 
+export function Button({ 
   children, 
   variant = 'primary', 
   fullWidth = false, 
   className = '', 
   ...props 
-}) => {
+}: ButtonProps) {
   const baseStyles = "py-3 px-6 rounded-lg font-medium tracking-wide transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed transform active:scale-95";
   
   const variants = {

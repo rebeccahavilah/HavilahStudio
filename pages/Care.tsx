@@ -9,7 +9,7 @@ const iconMap: Record<string, React.ReactNode> = {
   feather: <Feather size={24} />
 };
 
-const Care: React.FC = () => {
+export default function Care() {
   return (
     <div className="animate-fade-in pb-10">
       <header className="mb-10 text-center">
@@ -41,5 +41,3 @@ const Care: React.FC = () => {
     </div>
   );
 };
-
-export default Care;

@@ -4,7 +4,7 @@ import { Calendar as CalendarIcon, Clock, CreditCard, Wallet, ChevronLeft, Chevr
 import { LASH_MODELS } from '../constants';
 import { LashModel } from '../types';
 
-const Booking: React.FC = () => {
+export default function Booking() {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
@@ -230,5 +230,3 @@ const Booking: React.FC = () => {
     </div>
   );
 };
-
-export default Booking;

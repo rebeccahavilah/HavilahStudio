@@ -3,7 +3,7 @@ import { Button } from '../components/Button';
 import { Upload, Sparkles, Loader2, Camera, X, SwitchCamera } from 'lucide-react';
 import { analyzeImageForConsultancy } from '../services/geminiService';
 
-const Consultancy: React.FC = () => {
+export default function Consultancy() {
   const [image, setImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<string | null>(null);
@@ -181,5 +181,3 @@ const Consultancy: React.FC = () => {
     </div>
   );
 };
-
-export default Consultancy;

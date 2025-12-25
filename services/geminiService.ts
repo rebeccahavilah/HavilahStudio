@@ -1,5 +1,3 @@
-// File: services/geminiService.ts
-
 // A sessão de chat agora é apenas uma representação do histórico no lado do cliente
 export const startChatSession = () => {
   return {

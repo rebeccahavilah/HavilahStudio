@@ -1,0 +1,55 @@
+// File: api/chat.ts
+import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
+
+// Esta função é executada no servidor da Vercel, não no navegador.
+export async function POST(req: Request) {
+  try {
+    const { history, message } = await req.json();
+
+    const apiKey = process.env.API_KEY;
+    if (!apiKey) {
+      return new Response("API key not configured", { status: 500 });
+    }
+
+    const ai = new GoogleGenAI({ apiKey });
+
+    const SYSTEM_INSTRUCTION_CHAT = `
+      You are the virtual assistant for Havilah Lash Studio... 
+      // (Você pode copiar o system instruction completo do seu geminiService.ts aqui)
+    `;
+    
+    const model = 'gemini-3-flash-preview';
+    
+    const formattedHistory = history.map((msg: { role: string, text: string }) => ({
+      role: msg.role,
+      parts: [{ text: msg.text }]
+    }));
+
+    const chat = ai.chats.create({
+      model,
+      config: { systemInstruction: SYSTEM_INSTRUCTION_CHAT },
+      history: formattedHistory
+    });
+
+    const streamResponse = await chat.sendMessageStream({ message });
+    
+    // Transforma o stream do Gemini em um stream que podemos enviar para o cliente
+    const stream = new ReadableStream({
+      async start(controller) {
+        for await (const chunk of streamResponse) {
+          const c = chunk as GenerateContentResponse;
+          controller.enqueue(new TextEncoder().encode(c.text));
+        }
+        controller.close();
+      },
+    });
+
+    return new Response(stream, {
+      headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+    });
+
+  } catch (error) {
+    console.error("API Chat Error:", error);
+    return new Response("Error processing chat request.", { status: 500 });
+  }
+}

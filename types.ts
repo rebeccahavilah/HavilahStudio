@@ -1,4 +1,3 @@
-
 export interface LashModel {
   id: string;
   user_id?: string;
@@ -39,4 +38,5 @@ export enum AppRoute {
   CONSULTANCY = '/consultoria',
   CARE = '/cuidados',
   CHAT = '/chat-ai',
+  ABOUT_ME = '/sobre-mim', // <--- ROTA ADICIONADA AQUI!
 }

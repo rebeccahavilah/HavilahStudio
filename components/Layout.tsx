@@ -8,7 +8,7 @@ import { AppRoute } from '../types';
 // 1. @ts-ignore bloqueia a verificação estrita do TypeScript para esta linha.
 // 2. Trocamos a extensão de .png para .jpg
 // @ts-ignore
-import logoImagem from './logo.jpg';
+import logoImagem from './logo.jpeg';
 
 interface LayoutProps {
   children: React.ReactNode;

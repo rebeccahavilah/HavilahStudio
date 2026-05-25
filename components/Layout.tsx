@@ -1,13 +1,8 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-// Importação dos ícones
-import { Menu, X, Home, Calendar, DollarSign, MessageCircle, Star, Sparkles, User } from 'lucide-react';
+// DOCUMENTAÇÃO: Importamos apenas ícones validados pelo seu projeto anterior para evitar falhas de versão.
+import { Menu, X, Home, Calendar, DollarSign, MessageCircle, Star, Sparkles } from 'lucide-react';
 import { AppRoute } from '../types';
-
-// DOCUMENTAÇÃO DA CORREÇÃO:
-// O nome do arquivo foi atualizado para combinar perfeitamente com o arquivo 'logo.jpeg' que está no GitHub.
-// @ts-ignore
-import logoImagem from './logo.jpeg';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -18,14 +13,15 @@ export default function Layout({ children }: LayoutProps) {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Matriz de navegação
+  // DOCUMENTAÇÃO: Matriz de navegação à prova de falhas de tipagem.
   const navItems = [
     { icon: Home, label: 'Dashboard', path: AppRoute.DASHBOARD },
     { icon: DollarSign, label: 'Valores', path: AppRoute.PRICING },
     { icon: Calendar, label: 'Agendar', path: AppRoute.BOOKING },
     { icon: Sparkles, label: 'Consultoria', path: AppRoute.CONSULTANCY },
     { icon: Star, label: 'Cuidados', path: AppRoute.CARE },
-    { icon: User, label: 'Sobre mim', path: '/sobre-mim' }, 
+    // Usamos o ícone Star provisoriamente para garantir o deploy.
+    { icon: Star, label: 'Sobre mim', path: '/sobre-mim' }, 
     { icon: MessageCircle, label: 'Assistente', path: AppRoute.CHAT },
   ];
 
@@ -40,12 +36,14 @@ export default function Layout({ children }: LayoutProps) {
       {/* Cabeçalho Mobile */}
       <div className="md:hidden flex items-center justify-between p-4 bg-havilah-black/95 backdrop-blur-md border-b border-havilah-gold/20 sticky top-0 z-40">
         <div className="flex items-center gap-2" onClick={() => navigate(AppRoute.DASHBOARD)}>
-           {/* Imagem do Logotipo */}
+           
+           {/* DOCUMENTAÇÃO: Caminho direto (bypassing TypeScript import) */}
            <img 
-             src={logoImagem} 
+             src="/logo.jpeg" 
              alt="Logo Rebecca Havilah" 
              className="w-8 h-8 rounded-full border border-havilah-gold object-cover" 
            />
+           
            <span className="font-serif text-havilah-gold tracking-widest text-sm">HAVILAH</span>
         </div>
         <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="text-havilah-gold p-1">
@@ -74,9 +72,9 @@ export default function Layout({ children }: LayoutProps) {
                </button>
              </div>
             
-            {/* Imagem do Logotipo */}
+            {/* DOCUMENTAÇÃO: Caminho direto (bypassing TypeScript import) */}
             <img 
-              src={logoImagem} 
+              src="/logo.jpeg" 
               alt="Logo Rebecca Havilah" 
               className="w-16 h-16 rounded-full border border-havilah-gold object-cover mx-auto mb-4 bg-havilah-black" 
             />

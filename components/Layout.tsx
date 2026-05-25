@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'; // Correção 1: 'import' com 'i' minúsculo
 import { useLocation, useNavigate } from 'react-router-dom';
-// DOCUMENTAÇÃO: Importamos apenas ícones validados pelo seu projeto anterior para evitar falhas de versão.
 import { Menu, X, Home, Calendar, DollarSign, MessageCircle, Star, Sparkles } from 'lucide-react';
 import { AppRoute } from '../types';
+
+// Correção 2: Importando o arquivo logo.jpeg que está na mesma pasta (components)
+import logoImg from './logo.jpeg';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -13,14 +15,12 @@ export default function Layout({ children }: LayoutProps) {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // DOCUMENTAÇÃO: Matriz de navegação à prova de falhas de tipagem.
   const navItems = [
     { icon: Home, label: 'Dashboard', path: AppRoute.DASHBOARD },
     { icon: DollarSign, label: 'Valores', path: AppRoute.PRICING },
     { icon: Calendar, label: 'Agendar', path: AppRoute.BOOKING },
     { icon: Sparkles, label: 'Consultoria', path: AppRoute.CONSULTANCY },
     { icon: Star, label: 'Cuidados', path: AppRoute.CARE },
-    // Usamos o ícone Star provisoriamente para garantir o deploy.
     { icon: Star, label: 'Sobre mim', path: '/sobre-mim' }, 
     { icon: MessageCircle, label: 'Assistente', path: AppRoute.CHAT },
   ];
@@ -37,9 +37,9 @@ export default function Layout({ children }: LayoutProps) {
       <div className="md:hidden flex items-center justify-between p-4 bg-havilah-black/95 backdrop-blur-md border-b border-havilah-gold/20 sticky top-0 z-40">
         <div className="flex items-center gap-2" onClick={() => navigate(AppRoute.DASHBOARD)}>
            
-           {/* DOCUMENTAÇÃO: Caminho direto (bypassing TypeScript import) */}
+           {/* Implementação: Usando a variável 'logoImg' no src */}
            <img 
-             src="/logo.jpeg" 
+             src={logoImg} 
              alt="Logo Rebecca Havilah" 
              className="w-8 h-8 rounded-full border border-havilah-gold object-cover" 
            />
@@ -72,9 +72,9 @@ export default function Layout({ children }: LayoutProps) {
                </button>
              </div>
             
-            {/* DOCUMENTAÇÃO: Caminho direto (bypassing TypeScript import) */}
+            {/* Implementação: Usando a variável 'logoImg' no src novamente */}
             <img 
-              src="/logo.jpeg" 
+              src={logoImg} 
               alt="Logo Rebecca Havilah" 
               className="w-16 h-16 rounded-full border border-havilah-gold object-cover mx-auto mb-4 bg-havilah-black" 
             />

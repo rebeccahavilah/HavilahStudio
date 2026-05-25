@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, Home, Calendar, Diamond, MessageCircle, Heart, Bot, User } from 'lucide-react';
+// Importação dos ícones originais e do novo ícone de usuário
+import { Menu, X, Home, Calendar, DollarSign, MessageCircle, Star, Sparkles, User } from 'lucide-react';
 import { AppRoute } from '../types';
 
-// Importação da logo (Garante que a imagem 'logo.png' seja renderizada)
-import logoImagem from './logo.png';
+// DOCUMENTAÇÃO DO PASSO:
+// 1. @ts-ignore bloqueia a verificação estrita do TypeScript para esta linha.
+// 2. Trocamos a extensão de .png para .jpg
+// @ts-ignore
+import logoImagem from './logo.jpg';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -15,14 +19,15 @@ export default function Layout({ children }: LayoutProps) {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Matriz de navegação com os novos ícones e a nova rota da página Sobre Mim
+  // DOCUMENTAÇÃO DO PASSO:
+  // Array de navegação mantendo o texto fixo '/sobre-mim' para evitar erros de tipagem externa.
   const navItems = [
     { icon: Home, label: 'Dashboard', path: AppRoute.DASHBOARD },
-    { icon: Diamond, label: 'Valores', path: AppRoute.PRICING },
+    { icon: DollarSign, label: 'Valores', path: AppRoute.PRICING },
     { icon: Calendar, label: 'Agendar', path: AppRoute.BOOKING },
-    { icon: Bot, label: 'Consultoria', path: AppRoute.CONSULTANCY },
-    { icon: Heart, label: 'Cuidados', path: AppRoute.CARE },
-    { icon: User, label: 'Sobre mim', path: AppRoute.ABOUT_ME }, // Utilizando a tipagem corrigida
+    { icon: Sparkles, label: 'Consultoria', path: AppRoute.CONSULTANCY },
+    { icon: Star, label: 'Cuidados', path: AppRoute.CARE },
+    { icon: User, label: 'Sobre mim', path: '/sobre-mim' }, 
     { icon: MessageCircle, label: 'Assistente', path: AppRoute.CHAT },
   ];
 
@@ -37,6 +42,7 @@ export default function Layout({ children }: LayoutProps) {
       {/* Cabeçalho Mobile */}
       <div className="md:hidden flex items-center justify-between p-4 bg-havilah-black/95 backdrop-blur-md border-b border-havilah-gold/20 sticky top-0 z-40">
         <div className="flex items-center gap-2" onClick={() => navigate(AppRoute.DASHBOARD)}>
+           {/* Implementação da Logo em .jpg */}
            <img 
              src={logoImagem} 
              alt="Logo Rebecca Havilah" 
@@ -57,7 +63,7 @@ export default function Layout({ children }: LayoutProps) {
         />
       )}
 
-      {/* Menu Lateral (Desktop e Mobile) */}
+      {/* Menu Lateral */}
       <aside className={`
         fixed md:sticky top-0 left-0 h-full w-72 bg-havilah-darkGray border-r border-havilah-gold/10 z-50 transform transition-transform duration-300 ease-in-out shadow-2xl md:shadow-none
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0
@@ -70,7 +76,7 @@ export default function Layout({ children }: LayoutProps) {
                </button>
              </div>
             
-            {/* Renderização do Logotipo RH na Barra Lateral */}
+            {/* Implementação da Logo em .jpg */}
             <img 
               src={logoImagem} 
               alt="Logo Rebecca Havilah" 

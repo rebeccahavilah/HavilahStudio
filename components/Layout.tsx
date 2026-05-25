@@ -1,9 +1,9 @@
-import React, { useState } from 'react'; // Correção 1: 'import' com 'i' minúsculo
+import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, Home, Calendar, DollarSign, MessageCircle, Star, Sparkles } from 'lucide-react';
+// DOCUMENTAÇÃO: Adicionamos o ícone 'User' no final desta lista de importação
+import { Menu, X, Home, Calendar, DollarSign, MessageCircle, Star, Sparkles, User } from 'lucide-react';
 import { AppRoute } from '../types';
 
-// Correção 2: Importando o arquivo logo.jpeg que está na mesma pasta (components)
 import logoImg from './logo.jpeg';
 
 interface LayoutProps {
@@ -15,14 +15,16 @@ export default function Layout({ children }: LayoutProps) {
   const location = useLocation();
   const navigate = useNavigate();
 
+  // DOCUMENTAÇÃO: Matriz de itens de navegação. 
+  // Alteração: Movemos 'Sobre mim' para o final e trocamos a propriedade 'icon' para 'User'.
   const navItems = [
     { icon: Home, label: 'Dashboard', path: AppRoute.DASHBOARD },
     { icon: DollarSign, label: 'Valores', path: AppRoute.PRICING },
     { icon: Calendar, label: 'Agendar', path: AppRoute.BOOKING },
     { icon: Sparkles, label: 'Consultoria', path: AppRoute.CONSULTANCY },
     { icon: Star, label: 'Cuidados', path: AppRoute.CARE },
-    { icon: Star, label: 'Sobre mim', path: '/sobre-mim' }, 
     { icon: MessageCircle, label: 'Assistente', path: AppRoute.CHAT },
+    { icon: User, label: 'Sobre mim', path: '/sobre-mim' }, 
   ];
 
   const handleNav = (path: string) => {
@@ -37,7 +39,6 @@ export default function Layout({ children }: LayoutProps) {
       <div className="md:hidden flex items-center justify-between p-4 bg-havilah-black/95 backdrop-blur-md border-b border-havilah-gold/20 sticky top-0 z-40">
         <div className="flex items-center gap-2" onClick={() => navigate(AppRoute.DASHBOARD)}>
            
-           {/* Implementação: Usando a variável 'logoImg' no src */}
            <img 
              src={logoImg} 
              alt="Logo Rebecca Havilah" 
@@ -72,7 +73,6 @@ export default function Layout({ children }: LayoutProps) {
                </button>
              </div>
             
-            {/* Implementação: Usando a variável 'logoImg' no src novamente */}
             <img 
               src={logoImg} 
               alt="Logo Rebecca Havilah" 

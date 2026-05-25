@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-// Importação dos ícones originais e do novo ícone de usuário
+// Importação dos ícones
 import { Menu, X, Home, Calendar, DollarSign, MessageCircle, Star, Sparkles, User } from 'lucide-react';
 import { AppRoute } from '../types';
 
-// DOCUMENTAÇÃO DO PASSO:
-// 1. @ts-ignore bloqueia a verificação estrita do TypeScript para esta linha.
-// 2. Trocamos a extensão de .png para .jpg
+// DOCUMENTAÇÃO DA CORREÇÃO:
+// O nome do arquivo foi atualizado para combinar perfeitamente com o arquivo 'logo.jpeg' que está no GitHub.
 // @ts-ignore
 import logoImagem from './logo.jpeg';
 
@@ -19,8 +18,7 @@ export default function Layout({ children }: LayoutProps) {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // DOCUMENTAÇÃO DO PASSO:
-  // Array de navegação mantendo o texto fixo '/sobre-mim' para evitar erros de tipagem externa.
+  // Matriz de navegação
   const navItems = [
     { icon: Home, label: 'Dashboard', path: AppRoute.DASHBOARD },
     { icon: DollarSign, label: 'Valores', path: AppRoute.PRICING },
@@ -42,7 +40,7 @@ export default function Layout({ children }: LayoutProps) {
       {/* Cabeçalho Mobile */}
       <div className="md:hidden flex items-center justify-between p-4 bg-havilah-black/95 backdrop-blur-md border-b border-havilah-gold/20 sticky top-0 z-40">
         <div className="flex items-center gap-2" onClick={() => navigate(AppRoute.DASHBOARD)}>
-           {/* Implementação da Logo em .jpg */}
+           {/* Imagem do Logotipo */}
            <img 
              src={logoImagem} 
              alt="Logo Rebecca Havilah" 
@@ -76,7 +74,7 @@ export default function Layout({ children }: LayoutProps) {
                </button>
              </div>
             
-            {/* Implementação da Logo em .jpg */}
+            {/* Imagem do Logotipo */}
             <img 
               src={logoImagem} 
               alt="Logo Rebecca Havilah" 

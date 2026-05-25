@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, Home, Calendar, DollarSign, MessageCircle, Star, Sparkles } from 'lucide-react';
+// 1. Atualizamos a importação para trazer os novos ícones: Diamond, Bot, Heart e User
+import { Menu, X, Home, Calendar, Diamond, MessageCircle, Heart, Bot, User } from 'lucide-react';
 import { AppRoute } from '../types';
 
 interface LayoutProps {
@@ -12,12 +13,14 @@ export default function Layout({ children }: LayoutProps) {
   const location = useLocation();
   const navigate = useNavigate();
 
+  // 2. Atualizamos os ícones e adicionamos a nova rota 'Sobre mim'
   const navItems = [
     { icon: Home, label: 'Dashboard', path: AppRoute.DASHBOARD },
-    { icon: DollarSign, label: 'Valores', path: AppRoute.PRICING },
+    { icon: Diamond, label: 'Valores', path: AppRoute.PRICING }, // Ícone alterado
     { icon: Calendar, label: 'Agendar', path: AppRoute.BOOKING },
-    { icon: Sparkles, label: 'Consultoria', path: AppRoute.CONSULTANCY },
-    { icon: Star, label: 'Cuidados', path: AppRoute.CARE },
+    { icon: Bot, label: 'Consultoria', path: AppRoute.CONSULTANCY }, // Ícone alterado
+    { icon: Heart, label: 'Cuidados', path: AppRoute.CARE }, // Ícone alterado
+    { icon: User, label: 'Sobre mim', path: '/sobre-mim' }, // Nova aba adicionada
     { icon: MessageCircle, label: 'Assistente', path: AppRoute.CHAT },
   ];
 
@@ -31,7 +34,14 @@ export default function Layout({ children }: LayoutProps) {
       {/* Mobile Header */}
       <div className="md:hidden flex items-center justify-between p-4 bg-havilah-black/95 backdrop-blur-md border-b border-havilah-gold/20 sticky top-0 z-40">
         <div className="flex items-center gap-2" onClick={() => navigate(AppRoute.DASHBOARD)}>
-           <div className="w-8 h-8 rounded-full border border-havilah-gold flex items-center justify-center text-havilah-gold font-serif text-lg">H</div>
+           
+           {/* 3. LOGOTIPO MOBILE: Trocamos a <div> pelo <img> */}
+           <img 
+             src="/logo.png" 
+             alt="Logo Rebecca Havilah" 
+             className="w-8 h-8 rounded-full border border-havilah-gold object-cover" 
+           />
+           
            <span className="font-serif text-havilah-gold tracking-widest text-sm">HAVILAH</span>
         </div>
         <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="text-havilah-gold p-1">
@@ -59,7 +69,14 @@ export default function Layout({ children }: LayoutProps) {
                  <X size={24} />
                </button>
              </div>
-            <div className="w-16 h-16 rounded-full border border-havilah-gold flex items-center justify-center text-havilah-gold font-serif text-3xl mx-auto mb-4 bg-havilah-black">H</div>
+            
+            {/* 4. LOGOTIPO DESKTOP: Trocamos a <div> pelo <img> */}
+            <img 
+              src="/logo.png" 
+              alt="Logo Rebecca Havilah" 
+              className="w-16 h-16 rounded-full border border-havilah-gold object-cover mx-auto mb-4 bg-havilah-black" 
+            />
+            
             <h1 className="font-serif text-havilah-gold tracking-widest text-lg">HAVILAH</h1>
             <p className="text-xs text-havilah-goldLight/70 tracking-wide uppercase mt-1">Lash Studio</p>
           </div>
@@ -83,7 +100,7 @@ export default function Layout({ children }: LayoutProps) {
           
           <div className="mt-auto pt-6 border-t border-havilah-gold/10">
             <p className="text-xs text-center text-havilah-champagne/30">
-              © 2023 Havilah Studio
+              © 2026 Havilah Studio
             </p>
           </div>
         </div>
@@ -97,4 +114,4 @@ export default function Layout({ children }: LayoutProps) {
       </main>
     </div>
   );
-};
+}

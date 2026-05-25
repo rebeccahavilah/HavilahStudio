@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-// 1. Atualizamos a importação para trazer os novos ícones: Diamond, Bot, Heart e User
 import { Menu, X, Home, Calendar, Diamond, MessageCircle, Heart, Bot, User } from 'lucide-react';
 import { AppRoute } from '../types';
+
+// IMPORTAÇÃO DA IMAGEM: O arquivo logo.png DEVE estar na mesma pasta (components)
+import logoImagem from './logo.png';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -13,14 +15,14 @@ export default function Layout({ children }: LayoutProps) {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // 2. Atualizamos os ícones e adicionamos a nova rota 'Sobre mim'
+  // LISTA DE NAVEGAÇÃO: Ícones atualizados e nova aba adicionada
   const navItems = [
     { icon: Home, label: 'Dashboard', path: AppRoute.DASHBOARD },
-    { icon: Diamond, label: 'Valores', path: AppRoute.PRICING }, // Ícone alterado
+    { icon: Diamond, label: 'Valores', path: AppRoute.PRICING },
     { icon: Calendar, label: 'Agendar', path: AppRoute.BOOKING },
-    { icon: Bot, label: 'Consultoria', path: AppRoute.CONSULTANCY }, // Ícone alterado
-    { icon: Heart, label: 'Cuidados', path: AppRoute.CARE }, // Ícone alterado
-    { icon: User, label: 'Sobre mim', path: '/sobre-mim' }, // Nova aba adicionada
+    { icon: Bot, label: 'Consultoria', path: AppRoute.CONSULTANCY },
+    { icon: Heart, label: 'Cuidados', path: AppRoute.CARE },
+    { icon: User, label: 'Sobre mim', path: '/sobre-mim' }, // Nossa nova aba
     { icon: MessageCircle, label: 'Assistente', path: AppRoute.CHAT },
   ];
 
@@ -31,13 +33,14 @@ export default function Layout({ children }: LayoutProps) {
 
   return (
     <div className="min-h-screen bg-havilah-black text-havilah-champagne font-sans flex flex-col md:flex-row">
-      {/* Mobile Header */}
+      
+      {/* CABEÇALHO MOBILE (Celular) */}
       <div className="md:hidden flex items-center justify-between p-4 bg-havilah-black/95 backdrop-blur-md border-b border-havilah-gold/20 sticky top-0 z-40">
         <div className="flex items-center gap-2" onClick={() => navigate(AppRoute.DASHBOARD)}>
            
-           {/* 3. LOGOTIPO MOBILE: Trocamos a <div> pelo <img> */}
+           {/* LOGOTIPO MOBILE: Usando a imagem importada */}
            <img 
-             src="/logo.png" 
+             src={logoImagem} 
              alt="Logo Rebecca Havilah" 
              className="w-8 h-8 rounded-full border border-havilah-gold object-cover" 
            />
@@ -49,7 +52,7 @@ export default function Layout({ children }: LayoutProps) {
         </button>
       </div>
 
-      {/* Sidebar Overlay (Mobile) */}
+      {/* FUNDO ESCURO DO MENU MOBILE */}
       {isSidebarOpen && (
         <div 
           className="fixed inset-0 bg-black/80 z-40 md:hidden backdrop-blur-sm transition-opacity"
@@ -57,7 +60,7 @@ export default function Layout({ children }: LayoutProps) {
         />
       )}
 
-      {/* Sidebar (Desktop & Mobile) */}
+      {/* MENU LATERAL (Sidebar - Desktop e Mobile) */}
       <aside className={`
         fixed md:sticky top-0 left-0 h-full w-72 bg-havilah-darkGray border-r border-havilah-gold/10 z-50 transform transition-transform duration-300 ease-in-out shadow-2xl md:shadow-none
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0
@@ -70,9 +73,9 @@ export default function Layout({ children }: LayoutProps) {
                </button>
              </div>
             
-            {/* 4. LOGOTIPO DESKTOP: Trocamos a <div> pelo <img> */}
+            {/* LOGOTIPO DESKTOP: Usando a imagem importada */}
             <img 
-              src="/logo.png" 
+              src={logoImagem} 
               alt="Logo Rebecca Havilah" 
               className="w-16 h-16 rounded-full border border-havilah-gold object-cover mx-auto mb-4 bg-havilah-black" 
             />
@@ -81,6 +84,7 @@ export default function Layout({ children }: LayoutProps) {
             <p className="text-xs text-havilah-goldLight/70 tracking-wide uppercase mt-1">Lash Studio</p>
           </div>
 
+          {/* RENDERIZAÇÃO DOS BOTÕES DO MENU */}
           <nav className="flex-1 space-y-2">
             {navItems.map((item) => (
               <button
@@ -100,13 +104,13 @@ export default function Layout({ children }: LayoutProps) {
           
           <div className="mt-auto pt-6 border-t border-havilah-gold/10">
             <p className="text-xs text-center text-havilah-champagne/30">
-              © 2026 Havilah Studio
+              © 2023 Havilah Studio
             </p>
           </div>
         </div>
       </aside>
 
-      {/* Main Content */}
+      {/* ÁREA DE CONTEÚDO PRINCIPAL (Onde as páginas aparecem) */}
       <main className="flex-1 w-full min-w-0 bg-havilah-black">
         <div className="p-4 md:p-10 max-w-6xl mx-auto pb-24 md:pb-10">
           {children}

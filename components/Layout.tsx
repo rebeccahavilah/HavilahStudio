@@ -30,14 +30,12 @@ export default function Layout({ children }: LayoutProps) {
     setIsSidebarOpen(false);
   };
 
-  // DOCUMENTAÇÃO: Função auxiliar para gerar o CSS do botão.
-  // Separar essa lógica evita erros de formatação multilinhas no Vercel (esbuild).
+  // DOCUMENTAÇÃO: Função auxiliar para gerar o CSS do botão (evita erros no Vercel).
   const getButtonClass = (itemPath: string) => {
     const baseClass = "w-full flex items-center gap-4 px-4 py-3 rounded-lg transition-all duration-200";
     const activeClass = "bg-havilah-gold/10 text-havilah-gold border-l-2 border-havilah-gold";
     const inactiveClass = "text-havilah-champagne/60 hover:text-havilah-gold hover:bg-havilah-gold/5";
     
-    // Se a rota atual for igual ao caminho do botão, retorna a classe ativa. Senão, inativa.
     if (location.pathname === itemPath) {
       return `${baseClass} ${activeClass}`;
     }
@@ -58,9 +56,10 @@ export default function Layout({ children }: LayoutProps) {
              className="w-8 h-8 rounded-full border border-havilah-gold object-cover" 
            />
            
-           <div className="flex flex-col justify-center">
-             <span className="font-serif text-havilah-champagne/80 tracking-wider text-[10px] leading-tight">REBECCA</span>
-             <span className="font-serif text-havilah-gold tracking-widest text-sm leading-tight">HAVILAH</span>
+           {/* DOCUMENTAÇÃO: Textos do mobile agora com formatação idêntica */}
+           <div className="flex flex-col justify-center items-start">
+             <span className="font-serif text-havilah-gold tracking-widest text-sm leading-none mb-1">REBECCA</span>
+             <span className="font-serif text-havilah-gold tracking-widest text-sm leading-none">HAVILAH</span>
            </div>
         </div>
         <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="text-havilah-gold p-1">
@@ -97,9 +96,10 @@ export default function Layout({ children }: LayoutProps) {
               className="w-16 h-16 rounded-full border border-havilah-gold object-cover mx-auto mb-4 bg-havilah-black" 
             />
             
-            <h2 className="font-serif text-havilah-champagne/90 tracking-widest text-sm mb-1">REBECCA</h2>
-            <h1 className="font-serif text-havilah-gold tracking-widest text-lg">HAVILAH</h1>
-            <p className="text-xs text-havilah-goldLight/70 tracking-wide uppercase mt-1">Lash Studio</p>
+            {/* DOCUMENTAÇÃO: Textos do desktop agora com formatação idêntica */}
+            <h2 className="font-serif text-havilah-gold tracking-widest text-lg leading-none mb-1">REBECCA</h2>
+            <h1 className="font-serif text-havilah-gold tracking-widest text-lg leading-none">HAVILAH</h1>
+            <p className="text-xs text-havilah-goldLight/70 tracking-wide uppercase mt-2">Lash Studio</p>
           </div>
 
           <nav className="flex-1 space-y-2">
@@ -107,7 +107,6 @@ export default function Layout({ children }: LayoutProps) {
               <button
                 key={item.path}
                 onClick={() => handleNav(item.path)}
-                // DOCUMENTAÇÃO: Chamada limpa da função de classes CSS que criamos acima.
                 className={getButtonClass(item.path)}
               >
                 <item.icon size={18} />

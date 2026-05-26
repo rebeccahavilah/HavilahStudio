@@ -1,4 +1,4 @@
-import { GoogleGenAI, Content } from "@google/genai";
+import { GoogleGenAI } from "@google/genai";
 
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY
@@ -12,7 +12,7 @@ export default async function handler(req: any, res: any) {
 
     const { message, history = [] } = req.body;
 
-    const contents: Content[] = [
+    const contents = [
       ...history.map((h: any) => ({
         role: h.role as "user" | "model",
         parts: [{ text: String(h.content) }]
@@ -24,7 +24,7 @@ export default async function handler(req: any, res: any) {
     ];
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: "gemini-2.0-flash",
       contents
     });
 

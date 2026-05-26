@@ -3,7 +3,7 @@ export interface LashModel {
   user_id?: string;
   name: string;
   description: string;
-  image_url?: string; // Changed from imagePlaceholder to match DB
+  image_url?: string; // Changed from imagePlaceholder to match DB 
   imagePlaceholder?: string; // Keeping for compatibility or fallback
   price: number;
   maintenance_price?: number; // Changed to match DB snake_case

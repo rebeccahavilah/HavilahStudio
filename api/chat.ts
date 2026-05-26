@@ -10,12 +10,7 @@ export default async function handler(req: any, res: any) {
 
   try {
 
-    const body =
-      typeof req.body === "string"
-        ? JSON.parse(req.body)
-        : req.body;
-
-    const message = body?.message || "";
+    const { message } = req.body;
 
     if (!message) {
       return res.status(400).json({

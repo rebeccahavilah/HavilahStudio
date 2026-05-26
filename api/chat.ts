@@ -1,91 +1,24 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import type {
+  VercelRequest,
+  VercelResponse
+} from '@vercel/node';
 
 export default async function handler(
   req: VercelRequest,
   res: VercelResponse
 ) {
 
-  if (req.method !== 'POST') {
-
-    return res.status(405).json({
-      error: 'Método não permitido'
-    });
-
-  }
-
   try {
 
-    const { message } = req.body;
-
-    if (!message) {
-
-      return res.status(400).json({
-        error: 'Mensagem obrigatória'
-      });
-
-    }
-
-    const apiKey = process.env.GEMINI_API_KEY;
-
-    if (!apiKey) {
-
-      return res.status(500).json({
-        error: 'GEMINI_API_KEY não encontrada'
-      });
-
-    }
-
-    const genAI = new GoogleGenerativeAI(apiKey);
-
-    const model = genAI.getGenerativeModel({
-      model: 'gemini-1.5-flash'
-    });
-
-    const prompt = `
-Você é a assistente premium do Havilah Lash Studio.
-
-Seu tom é:
-- elegante
-- sofisticado
-- acolhedor
-- premium
-
-Você ajuda clientes sobre:
-- extensão de cílios
-- manutenção
-- cuidados
-- agendamento
-- estilos de lash
-
-Modelos disponíveis:
-- Volume Premium
-- Efeito Princesa
-- Volume Havilah
-- Fox Eyes
-- Volume Divino
-- Capping
-- Combo Glamour
-- Natural Soft
-
-Mensagem da cliente:
-${message}
-`;
-
-    const result = await model.generateContent(prompt);
-
-    const response = result.response.text();
-
     return res.status(200).json({
-      text: response
+      funcionando: true,
+      env: !!process.env.GEMINI_API_KEY
     });
 
   } catch (error: any) {
 
-    console.error('ERRO API:', error);
-
     return res.status(500).json({
-      error: error.message || 'Erro interno'
+      error: error.message
     });
 
   }

@@ -1,128 +1,50 @@
-import type {
-  VercelRequest,
-  VercelResponse
-} from '@vercel/node';
+import { useState } from 'react';
+import { sendImageForConsultancy } from '../services/geminiService';
 
-import {
-  GoogleGenerativeAI
-} from '@google/generative-ai';
+export default function Consultancy() {
+  const [image, setImage] = useState<string | null>(null);
+  const [result, setResult] = useState<string>('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-const SYSTEM_PROMPT = `
-Você é uma especialista premium em Lash Design do Havilah Lash Studio.
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-Analise:
-- formato dos olhos
-- harmonia facial
-- expressão facial
-- proporções
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64 = (reader.result as string).split(',')[1];
+      setImage(base64);
+    };
+    reader.readAsDataURL(file);
+  };
 
-E recomende os 2 melhores estilos.
+  const handleAnalyze = async () => {
+    if (!image) return;
+    setLoading(true);
+    setError('');
+    setResult('');
 
-Catálogo:
-- Volume Premium
-- Efeito Princesa
-- Volume Havilah
-- Fox Eyes
-- Volume Divino
-- Capping
-- Combo Glamour
-- Natural Soft
-
-Responda exatamente assim:
-
-**Análise do Olhar:** texto
-
-**Recomendação 1:** texto
-
-**Recomendação 2:** texto
-
-**Dica de Estilo:** texto
-
-Idioma:
-Português do Brasil.
-`;
-
-export default async function handler(
-  req: VercelRequest,
-  res: VercelResponse
-) {
-
-  if (req.method !== 'POST') {
-
-    return res.status(405).json({
-      error: 'Método não permitido'
-    });
-
-  }
-
-  try {
-
-    const apiKey =
-      process.env.GEMINI_API_KEY;
-
-    if (!apiKey) {
-
-      return res.status(500).json({
-        error: 'GEMINI_API_KEY não encontrada'
-      });
-
+    try {
+      const text = await sendImageForConsultancy(image);
+      setResult(text);
+    } catch (err: any) {
+      setError(err.message || 'Erro na análise');
+    } finally {
+      setLoading(false);
     }
+  };
 
-    const { base64Image } =
-      req.body;
-
-    if (!base64Image) {
-
-      return res.status(400).json({
-        error: 'Imagem não enviada'
-      });
-
-    }
-
-    const genAI =
-      new GoogleGenerativeAI(apiKey);
-
-    const model =
-      genAI.getGenerativeModel({
-        model: 'gemini-1.5-flash'
-      });
-
-    const result =
-      await model.generateContent([
-        {
-          text: SYSTEM_PROMPT
-        },
-        {
-          inlineData: {
-            mimeType: 'image/jpeg',
-            data: base64Image
-          }
-        }
-      ]);
-
-    const response =
-      await result.response;
-
-    const text =
-      response.text();
-
-    return res.status(200).json({
-      result: text
-    });
-
-  } catch (error: any) {
-
-    console.error(
-      'CONSULTANCY ERROR:',
-      error
-    );
-
-    return res.status(500).json({
-      error:
-        error?.message ||
-        'Erro interno'
-    });
-
-  }
-
+  return (
+    <div style={{ padding: '2rem' }}>
+      <h1>Consultoria de Cílios</h1>
+      <input type="file" accept="image/*" onChange={handleImageChange} />
+      <br /><br />
+      <button onClick={handleAnalyze} disabled={!image || loading}>
+        {loading ? 'Analisando...' : 'Analisar'}
+      </button>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {result && <div style={{ marginTop: '1rem', whiteSpace: 'pre-wrap' }}>{result}</div>}
+    </div>
+  );
 }

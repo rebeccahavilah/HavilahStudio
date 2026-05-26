@@ -1,11 +1,5 @@
 import { GoogleGenAI } from "@google/genai";
 
-// DOCUMENTAÇÃO: Isso avisa ao Vercel para usar o servidor moderno "Edge".
-// Sem isso, o req.json() e o ReadableStream falham com erro 500.
-export const config = {
-  runtime: 'edge',
-};
-
 const lashModelNames = [
   "Volume Premium", "Efeito Princesa", "Volume Havilah", "Fox Eyes",
   "Volume Divino", "Capping", "Combo Glamour", "Natural Soft"
@@ -21,25 +15,29 @@ Always maintain a 'premium service' persona. Use formatting like bullet points f
 If asked about prices, you can mention ranges but encourage checking the 'Valores' section for specifics.
 `;
 
-export default async function handler(req: Request) {
+// DOCUMENTAÇÃO: Removido o "runtime: edge". Agora rodamos no ambiente Node.js completo do Vercel.
+// No Node.js do Vercel, usamos a sintaxe Express-like (req, res).
+export default async function handler(req: any, res: any) {
+  // Evita erros de requisição inválida
   if (req.method !== 'POST') {
-    return new Response("Method Not Allowed", { status: 405 });
+    return res.status(405).json({ error: "Method Not Allowed" });
   }
 
   try {
-    const { history, message } = await req.json();
+    // DOCUMENTAÇÃO: No Node.js do Vercel, o corpo da requisição já vem convertido como objeto
+    const { history, message } = req.body;
 
     const apiKey = process.env.API_KEY;
     if (!apiKey) {
-      return new Response("API key not configured no Vercel", { status: 500 });
+      return res.status(500).send("A API_KEY não foi encontrada no painel do Vercel.");
     }
 
     const ai = new GoogleGenAI({ apiKey });
     
-    // DOCUMENTAÇÃO CORRIGIDA: Utilizando o modelo oficial e estável do Gemini.
-    const model = 'gemini-1.5-flash';
+    // DOCUMENTAÇÃO: Versão oficial de performance da nova biblioteca
+    const model = 'gemini-2.5-flash'; 
 
-    const formattedHistory = history.map((msg: { role: string, text: string }) => ({
+    const formattedHistory = history.map((msg: any) => ({
       role: msg.role,
       parts: [{ text: msg.text }]
     }));
@@ -52,24 +50,23 @@ export default async function handler(req: Request) {
 
     const streamResponse = await chat.sendMessageStream({ message });
 
-    const stream = new ReadableStream({
-      async start(controller) {
-        for await (const chunk of streamResponse) {
-          if (chunk.text) {
-             controller.enqueue(new TextEncoder().encode(chunk.text));
-          }
-        }
-        controller.close();
-      },
-    });
+    // DOCUMENTAÇÃO: Configura os cabeçalhos para enviar o texto em "pedaços" (Stream) no formato Node.js
+    res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+    res.setHeader('Transfer-Encoding', 'chunked');
 
-    return new Response(stream, {
-      headers: { 'Content-Type': 'text/plain; charset=utf-8' },
-    });
+    // Manda cada palavra para a tela do app assim que o Gemini processa
+    for await (const chunk of streamResponse) {
+      if (chunk.text) {
+         res.write(chunk.text);
+      }
+    }
+    
+    // Encerra a comunicação de forma segura
+    res.end();
 
   } catch (error: any) {
     console.error("API Chat Error Detalhado:", error);
-    // Retorna a mensagem de erro real para ajudar no debug
-    return new Response(`Erro interno no servidor: ${error.message}`, { status: 500 });
+    // Agora, se algo der errado, a tela vai nos mostrar exatamente o motivo!
+    return res.status(500).send(`Erro interno: ${error.message || 'Falha de comunicação no servidor.'}`);
   }
 }

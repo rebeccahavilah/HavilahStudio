@@ -8,7 +8,7 @@ export default function Chat() {
     {
       id: 'welcome',
       role: 'model',
-      text: 'Olá! Sou a assistente virtual do Havilah Lash Studio. Como posso ajudar você hoje? Posso sugerir modelos, tirar dúvidas sobre cuidados ou ajudar com agendamentos.',
+      text: 'Olá! Sou a assistente virtual do Havilah Lash Studio. Como posso ajudar você hoje?',
       timestamp: new Date()
     }
   ]);
@@ -85,12 +85,9 @@ export default function Chat() {
         botMessage
       ]);
 
-    } catch (error: any) {
+    } catch (error) {
 
-      console.error(
-        'Erro Chat:',
-        error
-      );
+      console.error('Erro Chat:', error);
 
       setMessages(prev => [
         ...prev,
@@ -151,8 +148,7 @@ export default function Chat() {
           >
 
             <div
-              className={`max-w-[80%] p-4 rounded-2xl text-sm leading-relaxed
-              ${
+              className={`max-w-[80%] p-4 rounded-2xl text-sm leading-relaxed ${
                 msg.role === 'user'
                   ? 'bg-havilah-gold text-havilah-black rounded-tr-sm'
                   : 'bg-havilah-darkGray border border-havilah-gold/10 text-havilah-champagne rounded-tl-sm'
@@ -208,4 +204,25 @@ export default function Chat() {
             setInput(e.target.value)
           }
           placeholder="Digite sua dúvida..."
-          className="flex-1 bg-havilah-black border border-havilah-gold/20 rounded-xl px-4 py-3 text-havilah-champagne focus:border-havilah-gold focus:outline-none disabled:opacity
+          className="flex-1 bg-havilah-black border border-havilah-gold/20 rounded-xl px-4 py-3 text-havilah-champagne focus:border-havilah-gold focus:outline-none"
+        />
+
+        <button
+          type="submit"
+          disabled={
+            loading || !input.trim()
+          }
+          className="bg-havilah-gold text-havilah-black p-3 rounded-xl hover:bg-havilah-goldLight disabled:opacity-50 transition-colors"
+        >
+
+          <Send size={20} />
+
+        </button>
+
+      </form>
+
+    </div>
+
+  );
+
+}

@@ -1,4 +1,4 @@
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI, Content } from "@google/genai";
 
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY
@@ -12,26 +12,23 @@ export default async function handler(req: any, res: any) {
 
     const { message, history = [] } = req.body;
 
-    // ✅ Formata histórico corretamente
-    const contents = [
+    const contents: Content[] = [
       ...history.map((h: any) => ({
-        role: h.role,
-        parts: [{ text: h.content }]
+        role: h.role as "user" | "model",
+        parts: [{ text: String(h.content) }]
       })),
       {
-        role: "user",
-        parts: [{ text: message }]
+        role: "user" as const,
+        parts: [{ text: String(message) }]
       }
     ];
 
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",
-      contents: contents  // ✅ Array de objetos, não string
+      contents
     });
 
-    return res.status(200).json({
-      text: response.text  // retorna JSON simples
-    });
+    return res.status(200).json({ text: response.text });
 
   } catch (error: any) {
     console.error("CHAT ERROR:", error);

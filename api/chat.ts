@@ -1,11 +1,17 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
-export default async function handler(req: any, res: any) {
+export default async function handler(
+  req: VercelRequest,
+  res: VercelResponse
+) {
 
-  if (req.method !== "POST") {
+  if (req.method !== 'POST') {
+
     return res.status(405).json({
-      error: "Método não permitido"
+      error: 'Método não permitido'
     });
+
   }
 
   try {
@@ -13,23 +19,27 @@ export default async function handler(req: any, res: any) {
     const { message } = req.body;
 
     if (!message) {
+
       return res.status(400).json({
-        error: "Mensagem obrigatória"
+        error: 'Mensagem obrigatória'
       });
+
     }
 
     const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
+
       return res.status(500).json({
-        error: "GEMINI_API_KEY não encontrada"
+        error: 'GEMINI_API_KEY não encontrada'
       });
+
     }
 
     const genAI = new GoogleGenerativeAI(apiKey);
 
     const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash"
+      model: 'gemini-1.5-flash'
     });
 
     const prompt = `
@@ -72,10 +82,10 @@ ${message}
 
   } catch (error: any) {
 
-    console.error("ERRO API:", error);
+    console.error('ERRO API:', error);
 
     return res.status(500).json({
-      error: error.message || "Erro interno"
+      error: error.message || 'Erro interno'
     });
 
   }

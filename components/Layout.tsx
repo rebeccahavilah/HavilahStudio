@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, Home, Calendar, DollarSign, MessageCircle, Star, Sparkles, User } from 'lucide-react';
 import { AppRoute } from '../types';
 
+// DOCUMENTAÇÃO: Importação do logotipo
 import logoImg from './logo.jpeg';
 
 interface LayoutProps {
@@ -29,6 +30,20 @@ export default function Layout({ children }: LayoutProps) {
     setIsSidebarOpen(false);
   };
 
+  // DOCUMENTAÇÃO: Função auxiliar para gerar o CSS do botão.
+  // Separar essa lógica evita erros de formatação multilinhas no Vercel (esbuild).
+  const getButtonClass = (itemPath: string) => {
+    const baseClass = "w-full flex items-center gap-4 px-4 py-3 rounded-lg transition-all duration-200";
+    const activeClass = "bg-havilah-gold/10 text-havilah-gold border-l-2 border-havilah-gold";
+    const inactiveClass = "text-havilah-champagne/60 hover:text-havilah-gold hover:bg-havilah-gold/5";
+    
+    // Se a rota atual for igual ao caminho do botão, retorna a classe ativa. Senão, inativa.
+    if (location.pathname === itemPath) {
+      return `${baseClass} ${activeClass}`;
+    }
+    return `${baseClass} ${inactiveClass}`;
+  };
+
   return (
     <div className="min-h-screen bg-havilah-black text-havilah-champagne font-sans flex flex-col md:flex-row">
       
@@ -43,7 +58,6 @@ export default function Layout({ children }: LayoutProps) {
              className="w-8 h-8 rounded-full border border-havilah-gold object-cover" 
            />
            
-           {/* TEXTOS DA MARCA NO MOBILE */}
            <div className="flex flex-col justify-center">
              <span className="font-serif text-havilah-champagne/80 tracking-wider text-[10px] leading-tight">REBECCA</span>
              <span className="font-serif text-havilah-gold tracking-widest text-sm leading-tight">HAVILAH</span>
@@ -83,7 +97,6 @@ export default function Layout({ children }: LayoutProps) {
               className="w-16 h-16 rounded-full border border-havilah-gold object-cover mx-auto mb-4 bg-havilah-black" 
             />
             
-            {/* TEXTOS DA MARCA NO DESKTOP */}
             <h2 className="font-serif text-havilah-champagne/90 tracking-widest text-sm mb-1">REBECCA</h2>
             <h1 className="font-serif text-havilah-gold tracking-widest text-lg">HAVILAH</h1>
             <p className="text-xs text-havilah-goldLight/70 tracking-wide uppercase mt-1">Lash Studio</p>
@@ -94,7 +107,28 @@ export default function Layout({ children }: LayoutProps) {
               <button
                 key={item.path}
                 onClick={() => handleNav(item.path)}
-                className={`w-full flex items-center gap-4 px-4 py-3 rounded-lg transition-all duration-200
-                  ${location.pathname === item.path 
-                    ? 'bg-havilah-gold/10 text-havilah-gold border-l-2 border-havilah-gold' 
-                    : 'text-havilah-champagne/60 hover:text-havilah-gold
+                // DOCUMENTAÇÃO: Chamada limpa da função de classes CSS que criamos acima.
+                className={getButtonClass(item.path)}
+              >
+                <item.icon size={18} />
+                <span className="text-sm font-medium tracking-wide">{item.label}</span>
+              </button>
+            ))}
+          </nav>
+          
+          <div className="mt-auto pt-6 border-t border-havilah-gold/10">
+            <p className="text-xs text-center text-havilah-champagne/30">
+              © 2026 Havilah Studio
+            </p>
+          </div>
+        </div>
+      </aside>
+
+      <main className="flex-1 w-full min-w-0 bg-havilah-black">
+        <div className="p-4 md:p-10 max-w-6xl mx-auto pb-24 md:pb-10">
+          {children}
+        </div>
+      </main>
+    </div>
+  );
+}

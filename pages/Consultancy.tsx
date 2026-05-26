@@ -1,197 +1,128 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Button } from '../components/Button';
-import { Upload, Sparkles, Loader2, Camera, X } from 'lucide-react';
-// DOCUMENTAÇÃO: Importação corrigida para bater exatamente com o nome da função que criamos no geminiService.ts
-import { sendImageForConsultancy } from '../services/geminiService';
+import type {
+  VercelRequest,
+  VercelResponse
+} from '@vercel/node';
 
-export default function Consultancy() {
-  const [image, setImage] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<string | null>(null);
-  const [isCameraOpen, setIsCameraOpen] = useState(false);
-  
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
+import {
+  GoogleGenerativeAI
+} from '@google/generative-ai';
 
-  // DOCUMENTAÇÃO: Processa a imagem quando o usuário faz upload de um arquivo.
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64 = reader.result as string;
-        setImage(base64);
-        setResult(null); 
-      };
-      reader.readAsDataURL(file);
+const SYSTEM_PROMPT = `
+Você é uma especialista premium em Lash Design do Havilah Lash Studio.
+
+Analise:
+- formato dos olhos
+- harmonia facial
+- expressão facial
+- proporções
+
+E recomende os 2 melhores estilos.
+
+Catálogo:
+- Volume Premium
+- Efeito Princesa
+- Volume Havilah
+- Fox Eyes
+- Volume Divino
+- Capping
+- Combo Glamour
+- Natural Soft
+
+Responda exatamente assim:
+
+**Análise do Olhar:** texto
+
+**Recomendação 1:** texto
+
+**Recomendação 2:** texto
+
+**Dica de Estilo:** texto
+
+Idioma:
+Português do Brasil.
+`;
+
+export default async function handler(
+  req: VercelRequest,
+  res: VercelResponse
+) {
+
+  if (req.method !== 'POST') {
+
+    return res.status(405).json({
+      error: 'Método não permitido'
+    });
+
+  }
+
+  try {
+
+    const apiKey =
+      process.env.GEMINI_API_KEY;
+
+    if (!apiKey) {
+
+      return res.status(500).json({
+        error: 'GEMINI_API_KEY não encontrada'
+      });
+
     }
-  };
 
-  // DOCUMENTAÇÃO: Solicita permissão e inicia a câmera frontal do dispositivo.
-  const startCamera = async () => {
-    setIsCameraOpen(true);
-    setResult(null);
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-      }
-    } catch (err) {
-      console.error("Error accessing camera:", err);
-      setIsCameraOpen(false);
-      alert("Não foi possível acessar a câmera. Verifique as permissões do seu navegador.");
+    const { base64Image } =
+      req.body;
+
+    if (!base64Image) {
+
+      return res.status(400).json({
+        error: 'Imagem não enviada'
+      });
+
     }
-  };
 
-  // DOCUMENTAÇÃO: Captura o frame atual do vídeo, inverte (efeito espelho) e salva como Base64.
-  const capturePhoto = () => {
-    if (videoRef.current) {
-      const canvas = document.createElement('canvas');
-      canvas.width = videoRef.current.videoWidth;
-      canvas.height = videoRef.current.videoHeight;
-      const ctx = canvas.getContext('2d');
-      if (ctx) {
-        ctx.translate(canvas.width, 0);
-        ctx.scale(-1, 1);
-        ctx.drawImage(videoRef.current, 0, 0);
-      }
-      const base64 = canvas.toDataURL('image/jpeg');
-      setImage(base64);
-      stopCamera();
-    }
-  };
+    const genAI =
+      new GoogleGenerativeAI(apiKey);
 
-  // DOCUMENTAÇÃO: Desliga a câmera para economizar bateria e processamento do usuário.
-  const stopCamera = () => {
-    if (videoRef.current && videoRef.current.srcObject) {
-      const stream = videoRef.current.srcObject as MediaStream;
-      stream.getTracks().forEach(track => track.stop());
-    }
-    setIsCameraOpen(false);
-  };
+    const model =
+      genAI.getGenerativeModel({
+        model: 'gemini-1.5-flash'
+      });
 
-  // DOCUMENTAÇÃO: Garante que a câmera seja desligada se o usuário sair da página.
-  useEffect(() => {
-    return () => {
-      stopCamera();
-    };
-  }, []);
+    const result =
+      await model.generateContent([
+        {
+          text: SYSTEM_PROMPT
+        },
+        {
+          inlineData: {
+            mimeType: 'image/jpeg',
+            data: base64Image
+          }
+        }
+      ]);
 
-  // DOCUMENTAÇÃO: Envia a imagem para a nossa API no backend para análise do Visagismo.
-  const handleAnalysis = async () => {
-    if (!image) return;
-    setLoading(true);
-    
-    try {
-      // Extrai apenas a string Base64 da imagem para enviar à API
-      const base64Data = image.split(',')[1];
-      
-      // Chama a função atualizada do serviço
-      const analysis = await sendImageForConsultancy(base64Data);
-      setResult(analysis);
-    } catch (error) {
-      console.error("Erro na análise da imagem:", error);
-      alert("Ocorreu um erro ao analisar sua foto. Por favor, tente novamente.");
-    } finally {
-      setLoading(false);
-    }
-  };
+    const response =
+      await result.response;
 
-  return (
-    <div className="animate-fade-in max-w-3xl mx-auto pb-10">
-      <header className="mb-8 text-center">
-        <h1 className="font-serif text-3xl text-havilah-gold mb-2">Consultoria Visagista IA</h1>
-        <p className="text-havilah-champagne/60">
-          Envie uma foto ou tire uma selfie para que nossa Inteligência Artificial recomende o design perfeito.
-        </p>
-      </header>
+    const text =
+      response.text();
 
-      <div className="bg-havilah-card border border-havilah-gold/10 p-8 rounded-2xl mb-8 text-center relative overflow-hidden">
-        
-        {isCameraOpen && (
-          <div className="absolute inset-0 z-20 bg-black flex flex-col items-center justify-center">
-            <video 
-              ref={videoRef} 
-              autoPlay 
-              playsInline 
-              className="w-full h-full object-cover transform -scale-x-100" 
-            />
-            <div className="absolute bottom-6 flex items-center gap-6">
-               <button onClick={stopCamera} className="p-4 rounded-full bg-havilah-darkGray text-havilah-champagne border border-havilah-gold/30">
-                 <X size={24} />
-               </button>
-               <button onClick={capturePhoto} className="p-6 rounded-full bg-havilah-gold text-havilah-black border-4 border-havilah-black shadow-lg shadow-havilah-gold/20 transform active:scale-95 transition-all">
-                 <Camera size={32} />
-               </button>
-            </div>
-          </div>
-        )}
+    return res.status(200).json({
+      result: text
+    });
 
-        {!image ? (
-          <div className="flex flex-col md:flex-row gap-4 justify-center">
-             <div 
-              onClick={() => fileInputRef.current?.click()}
-              className="flex-1 border-2 border-dashed border-havilah-gold/30 rounded-xl p-8 cursor-pointer hover:bg-havilah-gold/5 transition-colors flex flex-col items-center gap-4"
-            >
-              <div className="w-12 h-12 rounded-full bg-havilah-gold/10 flex items-center justify-center text-havilah-gold">
-                <Upload size={24} />
-              </div>
-              <p className="text-havilah-white font-medium text-sm">Carregar Foto</p>
-            </div>
+  } catch (error: any) {
 
-            <div 
-              onClick={startCamera}
-              className="flex-1 border-2 border-dashed border-havilah-gold/30 rounded-xl p-8 cursor-pointer hover:bg-havilah-gold/5 transition-colors flex flex-col items-center gap-4"
-            >
-              <div className="w-12 h-12 rounded-full bg-havilah-gold/10 flex items-center justify-center text-havilah-gold">
-                <Camera size={24} />
-              </div>
-              <p className="text-havilah-white font-medium text-sm">Tirar Selfie</p>
-            </div>
-          </div>
-        ) : (
-          <div className="relative">
-            <img src={image} alt="Preview" className="max-h-80 mx-auto rounded-lg shadow-lg" />
-            <button 
-              onClick={() => setImage(null)}
-              className="absolute top-2 right-2 bg-black/50 text-white p-2 rounded-full hover:bg-black/80"
-            >
-              <X size={16} />
-            </button>
-          </div>
-        )}
-        
-        <input 
-          type="file" 
-          ref={fileInputRef} 
-          onChange={handleFileChange} 
-          className="hidden" 
-          accept="image/*"
-        />
+    console.error(
+      'CONSULTANCY ERROR:',
+      error
+    );
 
-        {image && !result && (
-          <div className="mt-6">
-            <Button onClick={handleAnalysis} disabled={loading} className="min-w-[200px]">
-              {loading ? <><Loader2 className="animate-spin mr-2" /> Analisando...</> : <><Sparkles className="mr-2" /> Analisar meu Olhar</>}
-            </Button>
-          </div>
-        )}
-      </div>
+    return res.status(500).json({
+      error:
+        error?.message ||
+        'Erro interno'
+    });
 
-      {result && (
-        <div className="bg-gradient-to-br from-havilah-card to-black border border-havilah-gold/30 p-8 rounded-2xl shadow-xl animate-fade-in-up">
-          <div className="flex items-center gap-3 mb-6 border-b border-havilah-gold/10 pb-4">
-            <Sparkles className="text-havilah-gold" />
-            <h3 className="font-serif text-2xl text-havilah-white">Recomendação Personalizada</h3>
-          </div>
-          <div className="prose prose-invert prose-gold max-w-none text-havilah-champagne/80 whitespace-pre-line leading-relaxed">
-            {result}
-          </div>
-          <div className="mt-8 text-center">
-             <Button onClick={() => window.location.hash = '#/agendamento'}>Agendar este Estilo</Button>
-          </div>
-        </div>
-      )}
-    </div>
-  );
+  }
+
 }

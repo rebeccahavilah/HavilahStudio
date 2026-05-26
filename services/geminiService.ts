@@ -2,7 +2,6 @@ export const sendMessageToApi = async (
   history: any[],
   message: string
 ): Promise<string> => {
-
   const response = await fetch('/api/chat', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -22,7 +21,6 @@ export const sendMessageToApi = async (
 export const sendImageForConsultancy = async (
   base64Image: string
 ): Promise<string> => {
-
   const response = await fetch('/api/consultancy', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

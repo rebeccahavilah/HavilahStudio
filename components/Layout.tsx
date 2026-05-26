@@ -98,4 +98,3 @@ export default function Layout({ children }: LayoutProps) {
                   ${location.pathname === item.path 
                     ? 'bg-havilah-gold/10 text-havilah-gold border-l-2 border-havilah-gold' 
                     : 'text-havilah-champagne/60 hover:text-havilah-gold
-                

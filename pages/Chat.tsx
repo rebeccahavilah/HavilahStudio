@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Loader2, Bot } from 'lucide-react';
-// IMPORTANTE: Certifique-se de que o caminho do serviço está correto
+// DOCUMENTAÇÃO: Importa a função que faz a ponte com a sua pasta 'api'
 import { sendMessageToApi } from '../services/geminiService';
 import { ChatMessage } from '../types';
 
 export default function Chat() {
+  // DOCUMENTAÇÃO: Estado inicial contendo a mensagem de boas-vindas
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: 'welcome',
@@ -17,6 +18,7 @@ export default function Chat() {
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  // DOCUMENTAÇÃO: Função para rolar o chat automaticamente para a mensagem mais recente
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -25,10 +27,12 @@ export default function Chat() {
     scrollToBottom();
   }, [messages]);
 
+  // DOCUMENTAÇÃO: Função principal de envio e processamento do chat
   const handleSend = async (e?: React.FormEvent) => {
     e?.preventDefault();
     if (!input.trim() || loading) return;
 
+    // 1. Cria o objeto da mensagem do usuário
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
       role: 'user',
@@ -36,6 +40,7 @@ export default function Chat() {
       timestamp: new Date()
     };
     
+    // 2. Prepara o histórico removendo a mensagem de boas-vindas para não confundir a IA
     const currentHistory = messages
       .filter(m => m.id !== 'welcome')
       .map(({ role, text }) => ({ role, text }));
@@ -45,36 +50,55 @@ export default function Chat() {
     setLoading(true);
 
     try {
-      // DOCUMENTAÇÃO: Nova integração limpa com o stream do Gemini
+      // 3. Chama a API via serviço
       const stream = await sendMessageToApi(currentHistory, userMessage.text);
+      
+      if (!stream) {
+          throw new Error("Nenhum fluxo de dados recebido da API.");
+      }
+
+      // 4. Prepara o leitor de stream nativo
+      const reader = stream.getReader();
+      const decoder = new TextDecoder();
       let fullResponse = "";
       const botMessageId = (Date.now() + 1).toString();
 
+      // 5. Adiciona um balão vazio que será preenchido dinamicamente
       setMessages(prev => [...prev, { id: botMessageId, role: 'model', text: '', timestamp: new Date() }]);
 
-      // O SDK do Gemini permite iterar o stream diretamente, sem precisar de TextDecoder
-      for await (const chunk of stream) {
-        fullResponse += chunk.text;
+      // 6. Loop infinito que lê os dados até a resposta terminar
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        
+        // Decodifica os bytes para texto legível
+        fullResponse += decoder.decode(value, { stream: true });
+        
+        // Atualiza a interface em tempo real com o texto recebido até o momento
         setMessages(prev => prev.map(msg => 
             msg.id === botMessageId ? { ...msg, text: fullResponse } : msg
         ));
       }
     } catch (error) {
-        console.error("API Chat Error:", error);
+        console.error("Erro na comunicação do Chat:", error);
         setMessages(prev => [...prev, {
           id: (Date.now() + 1).toString(),
           role: 'model',
-          text: "Desculpe, ocorreu um erro de comunicação com a assistente. Tente novamente.",
+          text: "Desculpe, ocorreu um erro de comunicação com a assistente. Verifique sua conexão e tente novamente.",
           timestamp: new Date(),
         }]);
     } finally {
+        // 7. Libera o input para uma nova mensagem
         setLoading(false);
     }
   };
 
   return (
     <div className="h-[calc(100vh-140px)] flex flex-col bg-havilah-card border border-havilah-gold/10 rounded-2xl overflow-hidden animate-fade-in">
-      {/* Header */}
+      
+      {/* =========================================
+          CABEÇALHO DO CHAT
+      ========================================= */}
       <div className="p-4 bg-havilah-darkGray border-b border-havilah-gold/10 flex items-center gap-3">
         <div className="w-10 h-10 rounded-full border border-havilah-gold bg-havilah-black flex items-center justify-center text-havilah-gold">
           <Bot size={20} />
@@ -87,7 +111,9 @@ export default function Chat() {
         </div>
       </div>
 
-      {/* Messages */}
+      {/* =========================================
+          ÁREA DE MENSAGENS
+      ========================================= */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin">
         {messages.map((msg) => (
           <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
@@ -102,6 +128,8 @@ export default function Chat() {
             </div>
           </div>
         ))}
+        
+        {/* Indicador de carregamento enquanto a IA processa o primeiro pacote */}
         {loading && messages[messages.length - 1]?.role === 'user' && (
           <div className="flex justify-start">
             <div className="bg-havilah-darkGray border border-havilah-gold/10 p-4 rounded-2xl rounded-tl-sm flex items-center gap-2">
@@ -110,10 +138,13 @@ export default function Chat() {
             </div>
           </div>
         )}
+        {/* Referência invisível para forçar a rolagem automática para o fim */}
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input */}
+      {/* =========================================
+          ÁREA DE DIGITAÇÃO (INPUT)
+      ========================================= */}
       <form onSubmit={handleSend} className="p-4 bg-havilah-darkGray border-t border-havilah-gold/10 flex gap-2">
         <input 
           type="text" 

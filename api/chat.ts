@@ -1,5 +1,4 @@
-// DOCUMENTAÇÃO: Usando a importação clássica do Node.js (CommonJS) para contornar o erro do Vercel
-const { GoogleGenAI } = require("@google/genai");
+import { GoogleGenAI } from "@google/genai";
 
 const lashModelNames = [
   "Volume Premium", "Efeito Princesa", "Volume Havilah", "Fox Eyes",
@@ -26,11 +25,10 @@ export default async function handler(req: any, res: any) {
 
     const apiKey = process.env.API_KEY;
     if (!apiKey) {
-      return res.status(500).send("A API_KEY não foi encontrada no painel do Vercel.");
+      return res.status(500).send("A API_KEY não foi configurada corretamente.");
     }
 
     const ai = new GoogleGenAI({ apiKey });
-    
     const model = 'gemini-2.5-flash'; 
 
     const formattedHistory = history.map((msg: any) => ({
@@ -59,6 +57,6 @@ export default async function handler(req: any, res: any) {
 
   } catch (error: any) {
     console.error("API Chat Error Detalhado:", error);
-    return res.status(500).send(`Erro interno: ${error.message || 'Falha de comunicação no servidor.'}`);
+    return res.status(500).send(`Erro interno no servidor: ${error.message}`);
   }
 }

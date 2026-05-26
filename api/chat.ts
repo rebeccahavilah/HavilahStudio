@@ -1,4 +1,10 @@
-import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
+import { GoogleGenAI } from "@google/genai";
+
+// DOCUMENTAÇÃO: Isso avisa ao Vercel para usar o servidor moderno "Edge".
+// Sem isso, o req.json() e o ReadableStream falham com erro 500.
+export const config = {
+  runtime: 'edge',
+};
 
 const lashModelNames = [
   "Volume Premium", "Efeito Princesa", "Volume Havilah", "Fox Eyes",
@@ -15,7 +21,6 @@ Always maintain a 'premium service' persona. Use formatting like bullet points f
 If asked about prices, you can mention ranges but encourage checking the 'Valores' section for specifics.
 `;
 
-// This function is executed on the server, not in the browser.
 export default async function handler(req: Request) {
   if (req.method !== 'POST') {
     return new Response("Method Not Allowed", { status: 405 });
@@ -26,11 +31,13 @@ export default async function handler(req: Request) {
 
     const apiKey = process.env.API_KEY;
     if (!apiKey) {
-      return new Response("API key not configured", { status: 500 });
+      return new Response("API key not configured no Vercel", { status: 500 });
     }
 
     const ai = new GoogleGenAI({ apiKey });
-    const model = 'gemini-3-flash-preview';
+    
+    // DOCUMENTAÇÃO CORRIGIDA: Utilizando o modelo oficial e estável do Gemini.
+    const model = 'gemini-1.5-flash';
 
     const formattedHistory = history.map((msg: { role: string, text: string }) => ({
       role: msg.role,
@@ -48,9 +55,8 @@ export default async function handler(req: Request) {
     const stream = new ReadableStream({
       async start(controller) {
         for await (const chunk of streamResponse) {
-          const c = chunk as GenerateContentResponse;
-          if (c.text) {
-             controller.enqueue(new TextEncoder().encode(c.text));
+          if (chunk.text) {
+             controller.enqueue(new TextEncoder().encode(chunk.text));
           }
         }
         controller.close();
@@ -61,8 +67,9 @@ export default async function handler(req: Request) {
       headers: { 'Content-Type': 'text/plain; charset=utf-8' },
     });
 
-  } catch (error) {
-    console.error("API Chat Error:", error);
-    return new Response("Error processing chat request.", { status: 500 });
+  } catch (error: any) {
+    console.error("API Chat Error Detalhado:", error);
+    // Retorna a mensagem de erro real para ajudar no debug
+    return new Response(`Erro interno no servidor: ${error.message}`, { status: 500 });
   }
 }

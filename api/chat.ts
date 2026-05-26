@@ -1,34 +1,61 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-export default async function handler(req: any, res: any) {
-
-  if (req.method !== "POST") {
-    return res.status(405).json({
-      error: "Método não permitido"
-    });
-  }
+export default async function handler(req: Request) {
 
   try {
 
-    const body =
-      typeof req.body === "string"
-        ? JSON.parse(req.body)
-        : req.body;
+    if (req.method !== "POST") {
+
+      return new Response(
+        JSON.stringify({
+          error: "Método não permitido"
+        }),
+        {
+          status: 405,
+          headers: {
+            "Content-Type": "application/json"
+          }
+        }
+      );
+
+    }
+
+    const body = await req.json();
 
     const message = body?.message;
 
     if (!message) {
-      return res.status(400).json({
-        error: "Mensagem obrigatória"
-      });
+
+      return new Response(
+        JSON.stringify({
+          error: "Mensagem obrigatória"
+        }),
+        {
+          status: 400,
+          headers: {
+            "Content-Type": "application/json"
+          }
+        }
+      );
+
     }
 
     const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
-      return res.status(500).json({
-        error: "GEMINI_API_KEY não encontrada"
-      });
+
+      return new Response(
+        JSON.stringify({
+          error: "GEMINI_API_KEY não encontrada"
+        }),
+        {
+          status: 500,
+          headers: {
+            "Content-Type": "application/json"
+          }
+        }
+      );
+
     }
 
     const genAI = new GoogleGenerativeAI(apiKey);
@@ -40,21 +67,20 @@ export default async function handler(req: any, res: any) {
     const prompt = `
 Você é a assistente premium do Havilah Lash Studio.
 
-Seu tom é:
+Tom:
 - elegante
 - sofisticado
 - acolhedor
-- feminino
 - premium
 
 Você ajuda clientes sobre:
 - extensões de cílios
 - cuidados
+- manutenção
 - agendamento
 - estilos
-- manutenção
 
-Modelos disponíveis:
+Modelos:
 - Volume Premium
 - Efeito Princesa
 - Volume Havilah
@@ -72,17 +98,33 @@ ${message}
 
     const response = result.response.text();
 
-    return res.status(200).json({
-      text: response
-    });
+    return new Response(
+      JSON.stringify({
+        text: response
+      }),
+      {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }
+    );
 
   } catch (error: any) {
 
     console.error("ERRO API:", error);
 
-    return res.status(500).json({
-      error: error.message
-    });
+    return new Response(
+      JSON.stringify({
+        error: error.message
+      }),
+      {
+        status: 500,
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }
+    );
 
   }
 

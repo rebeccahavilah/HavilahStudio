@@ -4,8 +4,14 @@ import type {
 } from '@vercel/node';
 
 import {
-  GoogleGenerativeAI
-} from '@google/generative-ai';
+  GoogleGenAI
+} from '@google/genai';
+
+const ai =
+  new GoogleGenAI({
+    apiKey:
+      process.env.GEMINI_API_KEY
+  });
 
 export default async function handler(
   req: VercelRequest,
@@ -22,74 +28,30 @@ export default async function handler(
 
   try {
 
-    const apiKey =
-      process.env.GEMINI_API_KEY;
-
-    if (!apiKey) {
-
-      return res.status(500).json({
-        error: 'API KEY não encontrada'
-      });
-
-    }
-
-    const { message } = req.body;
-
-    if (!message) {
-
-      return res.status(400).json({
-        error: 'Mensagem obrigatória'
-      });
-
-    }
-
-    const genAI =
-      new GoogleGenerativeAI(apiKey);
-
-    const model =
-      genAI.getGenerativeModel({
-        model: 'gemini-1.5-flash'
-      });
-
-    const result =
-      await model.generateContent({
-        contents: [
-          {
-            role: 'user',
-            parts: [
-              {
-                text: `
-Você é a assistente premium do Havilah Lash Studio.
-
-Responda de forma elegante, acolhedora e sofisticada.
-
-Mensagem da cliente:
-${message}
-`
-              }
-            ]
-          }
-        ]
-      });
+    const { message } =
+      req.body;
 
     const response =
-      result.response.text();
+      await ai.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents: message
+      });
 
     return res.status(200).json({
-      text: response
+      text: response.text
     });
 
   } catch (error: any) {
 
     console.error(
-      'ERRO GEMINI:',
+      'CHAT ERROR:',
       error
     );
 
     return res.status(500).json({
       error:
         error?.message ||
-        'Erro interno Gemini'
+        'Erro Gemini'
     });
 
   }

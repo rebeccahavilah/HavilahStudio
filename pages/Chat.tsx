@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Loader2, Bot } from 'lucide-react';
+// IMPORTANTE: Certifique-se de que o caminho do serviço está correto
 import { sendMessageToApi } from '../services/geminiService';
 import { ChatMessage } from '../types';
 
@@ -36,7 +37,7 @@ export default function Chat() {
     };
     
     const currentHistory = messages
-      .filter(m => m.id !== 'welcome') // Don't send the welcome message as chat history
+      .filter(m => m.id !== 'welcome')
       .map(({ role, text }) => ({ role, text }));
 
     setMessages(prev => [...prev, userMessage]);
@@ -44,21 +45,16 @@ export default function Chat() {
     setLoading(true);
 
     try {
+      // DOCUMENTAÇÃO: Nova integração limpa com o stream do Gemini
       const stream = await sendMessageToApi(currentHistory, userMessage.text);
-      const reader = stream.getReader();
-      const decoder = new TextDecoder();
       let fullResponse = "";
       const botMessageId = (Date.now() + 1).toString();
 
-      // Add a placeholder for the bot's response
       setMessages(prev => [...prev, { id: botMessageId, role: 'model', text: '', timestamp: new Date() }]);
 
-      while (true) {
-        const { value, done } = await reader.read();
-        if (done) break;
-        fullResponse += decoder.decode(value, { stream: true });
-        
-        // Update the streaming message in place
+      // O SDK do Gemini permite iterar o stream diretamente, sem precisar de TextDecoder
+      for await (const chunk of stream) {
+        fullResponse += chunk.text;
         setMessages(prev => prev.map(msg => 
             msg.id === botMessageId ? { ...msg, text: fullResponse } : msg
         ));
@@ -136,4 +132,4 @@ export default function Chat() {
       </form>
     </div>
   );
-};
+}

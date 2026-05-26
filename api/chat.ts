@@ -1,61 +1,29 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-export default async function handler(req: Request) {
+export default async function handler(req: any, res: any) {
+
+  if (req.method !== "POST") {
+    return res.status(405).json({
+      error: "Método não permitido"
+    });
+  }
 
   try {
 
-    if (req.method !== "POST") {
-
-      return new Response(
-        JSON.stringify({
-          error: "Método não permitido"
-        }),
-        {
-          status: 405,
-          headers: {
-            "Content-Type": "application/json"
-          }
-        }
-      );
-
-    }
-
-    const body = await req.json();
-
-    const message = body?.message;
+    const { message } = req.body;
 
     if (!message) {
-
-      return new Response(
-        JSON.stringify({
-          error: "Mensagem obrigatória"
-        }),
-        {
-          status: 400,
-          headers: {
-            "Content-Type": "application/json"
-          }
-        }
-      );
-
+      return res.status(400).json({
+        error: "Mensagem obrigatória"
+      });
     }
 
     const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
-
-      return new Response(
-        JSON.stringify({
-          error: "GEMINI_API_KEY não encontrada"
-        }),
-        {
-          status: 500,
-          headers: {
-            "Content-Type": "application/json"
-          }
-        }
-      );
-
+      return res.status(500).json({
+        error: "GEMINI_API_KEY não encontrada"
+      });
     }
 
     const genAI = new GoogleGenerativeAI(apiKey);
@@ -67,20 +35,20 @@ export default async function handler(req: Request) {
     const prompt = `
 Você é a assistente premium do Havilah Lash Studio.
 
-Tom:
+Seu tom é:
 - elegante
 - sofisticado
 - acolhedor
 - premium
 
 Você ajuda clientes sobre:
-- extensões de cílios
-- cuidados
+- extensão de cílios
 - manutenção
+- cuidados
 - agendamento
-- estilos
+- estilos de lash
 
-Modelos:
+Modelos disponíveis:
 - Volume Premium
 - Efeito Princesa
 - Volume Havilah
@@ -98,33 +66,17 @@ ${message}
 
     const response = result.response.text();
 
-    return new Response(
-      JSON.stringify({
-        text: response
-      }),
-      {
-        status: 200,
-        headers: {
-          "Content-Type": "application/json"
-        }
-      }
-    );
+    return res.status(200).json({
+      text: response
+    });
 
   } catch (error: any) {
 
     console.error("ERRO API:", error);
 
-    return new Response(
-      JSON.stringify({
-        error: error.message
-      }),
-      {
-        status: 500,
-        headers: {
-          "Content-Type": "application/json"
-        }
-      }
-    );
+    return res.status(500).json({
+      error: error.message || "Erro interno"
+    });
 
   }
 

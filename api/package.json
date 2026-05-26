@@ -1,7 +1,0 @@
-{
-  "name": "havilah-backend",
-  "dependencies": {
-    "@google/genai": "^1.14.0",
-    "@vercel/node": "^3.2.15"
-  }
-}

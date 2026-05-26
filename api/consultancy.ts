@@ -4,82 +4,21 @@ import type {
 } from '@vercel/node';
 
 import {
-  GoogleGenerativeAI
-} from '@google/generative-ai';
+  GoogleGenAI
+} from '@google/genai';
 
-const lashModelsForPrompt = [
-  {
-    name: "Volume Premium",
-    description: "Volume intenso, criado com leques volumosos. Ideal para mulheres que desejam um olhar marcante, cheio e glamouroso."
-  },
-  {
-    name: "Efeito Princesa",
-    description: "Alongamento lateral e elevação estratégica para um olhar sedutor e sofisticado."
-  },
-  {
-    name: "Volume Havilah",
-    description: "Resultado natural, delicado e elegante."
-  },
-  {
-    name: "Fox Eyes",
-    description: "Alongamento nos cantos externos para um visual moderno."
-  },
-  {
-    name: "Volume Divino",
-    description: "Aspecto fresh e contemporâneo."
-  },
-  {
-    name: "Capping",
-    description: "Equilíbrio entre naturalidade e volume."
-  },
-  {
-    name: "Combo Glamour",
-    description: "Abre o olhar com leveza e elegância."
-  },
-  {
-    name: "Natural Soft",
-    description: "Efeito extremamente suave e minimalista."
-  }
-]
-.map(
-  model =>
-    `${model.name}: ${model.description}`
-)
-.join('; ');
+const ai =
+  new GoogleGenAI({
+    apiKey:
+      process.env.GEMINI_API_KEY
+  });
 
 const SYSTEM_PROMPT = `
-Você é uma especialista premium em Lash Design do Havilah Lash Studio.
+Você é especialista premium do Havilah Lash Studio.
 
-Analise:
-- formato dos olhos
-- harmonia facial
-- expressão
-- proporções do rosto
+Analise o rosto e recomende os melhores estilos de cílios.
 
-Baseado nisso, escolha as 2 melhores opções do catálogo:
-
-${lashModelsForPrompt}
-
-REGRAS:
-- Seja elegante
-- Sofisticada
-- Técnica
-- Feminina
-- Acolhedora
-- Premium
-
-Responda EXATAMENTE neste formato:
-
-**Análise do Olhar:** texto
-
-**Recomendação 1:** nome - motivo
-
-**Recomendação 2:** nome - motivo
-
-**Dica de Estilo:** texto
-
-Idioma obrigatório:
-Português do Brasil.
+Responda em português.
 `;
 
 export default async function handler(
@@ -97,52 +36,27 @@ export default async function handler(
 
   try {
 
-    const apiKey =
-      process.env.GEMINI_API_KEY;
-
-    if (!apiKey) {
-
-      return res.status(500).json({
-        error: 'GEMINI_API_KEY não encontrada'
-      });
-
-    }
-
     const { base64Image } =
       req.body;
 
-    if (!base64Image) {
-
-      return res.status(400).json({
-        error: 'Imagem obrigatória'
-      });
-
-    }
-
-    const genAI =
-      new GoogleGenerativeAI(apiKey);
-
-    const model =
-      genAI.getGenerativeModel({
-        model: 'gemini-1.5-flash'
-      });
-
-    const result =
-      await model.generateContent([
-        SYSTEM_PROMPT,
-        {
-          inlineData: {
-            mimeType: 'image/jpeg',
-            data: base64Image
-          }
-        }
-      ]);
-
     const response =
-      result.response.text();
+      await ai.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents: [
+          {
+            inlineData: {
+              mimeType: 'image/jpeg',
+              data: base64Image
+            }
+          },
+          {
+            text: SYSTEM_PROMPT
+          }
+        ]
+      });
 
     return res.status(200).json({
-      result: response
+      result: response.text
     });
 
   } catch (error: any) {
@@ -155,7 +69,7 @@ export default async function handler(
     return res.status(500).json({
       error:
         error?.message ||
-        'Erro ao analisar imagem'
+        'Erro Gemini Vision'
     });
 
   }

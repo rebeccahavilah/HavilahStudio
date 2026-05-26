@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '../components/Button';
-import { Upload, Sparkles, Loader2, Camera, X, SwitchCamera } from 'lucide-react';
-import { analyzeImageForConsultancy } from '../services/geminiService';
+import { Upload, Sparkles, Loader2, Camera, X } from 'lucide-react';
+// DOCUMENTAÇÃO: Importação corrigida para bater exatamente com o nome da função que criamos no geminiService.ts
+import { sendImageForConsultancy } from '../services/geminiService';
 
 export default function Consultancy() {
   const [image, setImage] = useState<string | null>(null);
@@ -12,6 +13,7 @@ export default function Consultancy() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
+  // DOCUMENTAÇÃO: Processa a imagem quando o usuário faz upload de um arquivo.
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -25,6 +27,7 @@ export default function Consultancy() {
     }
   };
 
+  // DOCUMENTAÇÃO: Solicita permissão e inicia a câmera frontal do dispositivo.
   const startCamera = async () => {
     setIsCameraOpen(true);
     setResult(null);
@@ -36,10 +39,11 @@ export default function Consultancy() {
     } catch (err) {
       console.error("Error accessing camera:", err);
       setIsCameraOpen(false);
-      alert("Não foi possível acessar a câmera. Verifique as permissões.");
+      alert("Não foi possível acessar a câmera. Verifique as permissões do seu navegador.");
     }
   };
 
+  // DOCUMENTAÇÃO: Captura o frame atual do vídeo, inverte (efeito espelho) e salva como Base64.
   const capturePhoto = () => {
     if (videoRef.current) {
       const canvas = document.createElement('canvas');
@@ -47,7 +51,6 @@ export default function Consultancy() {
       canvas.height = videoRef.current.videoHeight;
       const ctx = canvas.getContext('2d');
       if (ctx) {
-        // Flip horizontally for selfie mirror effect
         ctx.translate(canvas.width, 0);
         ctx.scale(-1, 1);
         ctx.drawImage(videoRef.current, 0, 0);
@@ -58,6 +61,7 @@ export default function Consultancy() {
     }
   };
 
+  // DOCUMENTAÇÃO: Desliga a câmera para economizar bateria e processamento do usuário.
   const stopCamera = () => {
     if (videoRef.current && videoRef.current.srcObject) {
       const stream = videoRef.current.srcObject as MediaStream;
@@ -66,21 +70,31 @@ export default function Consultancy() {
     setIsCameraOpen(false);
   };
 
-  // Cleanup on unmount
+  // DOCUMENTAÇÃO: Garante que a câmera seja desligada se o usuário sair da página.
   useEffect(() => {
     return () => {
       stopCamera();
     };
   }, []);
 
+  // DOCUMENTAÇÃO: Envia a imagem para a nossa API no backend para análise do Visagismo.
   const handleAnalysis = async () => {
     if (!image) return;
     setLoading(true);
-    // Extract base64 data only
-    const base64Data = image.split(',')[1];
-    const analysis = await analyzeImageForConsultancy(base64Data);
-    setResult(analysis);
-    setLoading(false);
+    
+    try {
+      // Extrai apenas a string Base64 da imagem para enviar à API
+      const base64Data = image.split(',')[1];
+      
+      // Chama a função atualizada do serviço
+      const analysis = await sendImageForConsultancy(base64Data);
+      setResult(analysis);
+    } catch (error) {
+      console.error("Erro na análise da imagem:", error);
+      alert("Ocorreu um erro ao analisar sua foto. Por favor, tente novamente.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -180,4 +194,4 @@ export default function Consultancy() {
       )}
     </div>
   );
-};
+}

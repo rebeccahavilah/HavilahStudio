@@ -8,7 +8,7 @@ export default function Chat() {
     {
       id: 'welcome',
       role: 'model',
-      text: 'Olá! Sou a assistente virtual do Havilah Lash Studio. Como posso ajudar você hoje?',
+      text: 'Olá! Sou a Havilah, Como posso ajudar você hoje?',
       timestamp: new Date()
     }
   ]);

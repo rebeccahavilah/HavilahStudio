@@ -12,22 +12,65 @@ export default async function handler(
   res: VercelResponse
 ) {
 
+  if (req.method !== 'POST') {
+
+    return res.status(405).json({
+      error: 'Método não permitido'
+    });
+
+  }
+
   try {
 
+    const apiKey =
+      process.env.GEMINI_API_KEY;
+
+    if (!apiKey) {
+
+      return res.status(500).json({
+        error: 'API KEY não encontrada'
+      });
+
+    }
+
+    const { message } = req.body;
+
+    if (!message) {
+
+      return res.status(400).json({
+        error: 'Mensagem obrigatória'
+      });
+
+    }
+
     const genAI =
-      new GoogleGenerativeAI(
-        process.env.GEMINI_API_KEY!
-      );
+      new GoogleGenerativeAI(apiKey);
 
     const model =
       genAI.getGenerativeModel({
-        model: 'gemini-pro'
+        model: 'gemini-1.5-flash-latest'
       });
 
     const result =
-      await model.generateContent(
-        'Diga apenas: olá'
-      );
+      await model.generateContent({
+        contents: [
+          {
+            role: 'user',
+            parts: [
+              {
+                text: `
+Você é a assistente premium do Havilah Lash Studio.
+
+Responda de forma elegante, acolhedora e sofisticada.
+
+Mensagem da cliente:
+${message}
+`
+              }
+            ]
+          }
+        ]
+      });
 
     const response =
       result.response.text();
@@ -38,10 +81,15 @@ export default async function handler(
 
   } catch (error: any) {
 
-    console.error(error);
+    console.error(
+      'ERRO GEMINI:',
+      error
+    );
 
     return res.status(500).json({
-      error: error.message
+      error:
+        error?.message ||
+        'Erro interno Gemini'
     });
 
   }

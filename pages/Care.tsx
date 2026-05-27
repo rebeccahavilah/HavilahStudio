@@ -2,10 +2,10 @@ import React from 'react';
 import { CARE_TIPS } from '../constants';
 
 const careImages: Record<string, string> = {
-  clock: "https://images.unsplash.com/photo-1631214500115-598fc2cb8d2d?q=80&w=800&auto=format&fit=crop",
-  droplet: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=800&auto=format&fit=crop",
-  shield: "https://images.unsplash.com/photo-1583001931096-959e9ad7b535?q=80&w=800&auto=format&fit=crop",
-  feather: "https://images.unsplash.com/photo-1512496015851-a90fb38ba796?q=80&w=800&auto=format&fit=crop"
+  clock: "https://images.unsplash.com/photo-1616683693504-3ea7e9ad6fec?q=80&w=800&auto=format&fit=crop",
+  droplet: "https://images.unsplash.com/photo-1597225244660-15a19b6b907c?q=80&w=800&auto=format&fit=crop",
+  shield: "https://images.unsplash.com/photo-1631214500115-598fc2cb8d2d?q=80&w=800&auto=format&fit=crop",
+  feather: "https://images.unsplash.com/photo-1620331311520-246422fd82f9?q=80&w=800&auto=format&fit=crop"
 };
 
 export default function Care() {
@@ -45,7 +45,7 @@ export default function Care() {
 
       <div className="mt-10 relative rounded-2xl overflow-hidden border border-havilah-gold/20">
         <img
-          src="https://images.unsplash.com/photo-1620331311520-246422fd82f9?q=80&w=1200&auto=format&fit=crop"
+          src="https://images.unsplash.com/photo-1587779782550-908359781b0f?q=80&w=1200&auto=format&fit=crop"
           alt="Cílios naturais"
           className="w-full h-40 object-cover"
         />

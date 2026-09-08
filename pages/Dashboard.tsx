@@ -2,18 +2,23 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppRoute } from '../types';
 
+// ==========================================
+// 1. CARROSSEL DE TRABALHO
+// ==========================================
+// Aqui chamamos exatamente os nomes dos arquivos que você subiu no GitHub.
 const carouselImages = [
-  "https://images.unsplash.com/photo-1631214500115-598fc2cb8d2d?q=80&w=800&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1597225244660-15a19b6b907c?q=80&w=800&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1616683693504-3ea7e9ad6fec?q=80&w=800&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1620331311520-246422fd82f9?q=80&w=800&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1512496015851-a90fb38ba796?q=80&w=800&auto=format&fit=crop",
+  "/ciliosfioafio.jpg",
+  "/ciliosfox.jpg",
+  "/ciliosfox2.jpg",
+  "/ciliosled.jpg",
+  "/gringa.jpg",
 ];
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const [current, setCurrent] = useState(0);
 
+  // Lógica para girar o carrossel automaticamente a cada 3,5 segundos
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrent(prev => (prev + 1) % carouselImages.length);
@@ -24,7 +29,9 @@ export default function Dashboard() {
   return (
     <div className="space-y-8 animate-fade-in pb-10">
 
-      {/* HERO — Foto + Info */}
+      {/* ==========================================
+          HERO — Foto principal mantida
+          ========================================== */}
       <div className="relative rounded-2xl overflow-hidden border border-havilah-gold/20" style={{ minHeight: '340px' }}>
         <img
           src="/rebecca.jpeg"
@@ -78,7 +85,7 @@ export default function Dashboard() {
         ))}
       </div>
 
-      {/* CARROSSEL */}
+      {/* CARROSSEL DE TRABALHOS */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <p className="text-havilah-gold/60 text-xs uppercase tracking-widest">Nosso trabalho</p>
@@ -105,26 +112,28 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* NAVEGAÇÃO PREMIUM */}
+      {/* ==========================================
+          2. NAVEGAÇÃO PREMIUM (Cards inferiores)
+          ========================================== */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         {[
           {
             label: "Valores",
             sub: "Conheça nossos serviços",
             route: AppRoute.PRICING,
-            img: "https://images.unsplash.com/photo-1631214500115-598fc2cb8d2d?q=80&w=400&auto=format&fit=crop"
+            img: "/sobrancelhahenna.jpg" 
           },
           {
             label: "Consultoria IA",
             sub: "Descubra seu estilo ideal",
             route: AppRoute.CONSULTANCY,
-            img: "https://images.unsplash.com/photo-1597225244660-15a19b6b907c?q=80&w=400&auto=format&fit=crop"
+            img: "/gringa.jpg" 
           },
           {
             label: "Cuidados",
             sub: "Preserve seus cílios",
             route: AppRoute.CARE,
-            img: "https://images.unsplash.com/photo-1512496015851-a90fb38ba796?q=80&w=400&auto=format&fit=crop"
+            img: "/sobrancelha2.jpg" 
           },
         ].map((item, i) => (
           <div

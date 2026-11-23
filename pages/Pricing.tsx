@@ -66,7 +66,7 @@ export default function Pricing() {
         <div className="bg-gradient-to-br from-havilah-card to-black border border-havilah-gold/20 p-6 md:p-8 rounded-xl relative overflow-hidden shadow-lg">
           <div className="absolute top-0 right-0 bg-havilah-gold text-black text-[10px] font-bold px-3 py-1 uppercase shadow-md">Best Seller</div>
           <h3 className="font-serif text-xl text-havilah-white mb-2">Combo Glamour</h3>
-          <div className="text-3xl font-serif text-havilah-gold mb-4">R$ 230</div>
+          <div className="text-3xl font-serif text-havilah-gold mb-4">R$ 280</div>
           <ul className="space-y-3 mb-8 text-sm text-havilah-champagne/70">
             <li className="flex items-start gap-2"><Check size={16} className="text-havilah-gold mt-0.5" /> <span>Aplicação Volume Havilah</span></li>
             <li className="flex items-start gap-2"><Check size={16} className="text-havilah-gold mt-0.5" /> <span>Kit de Cuidados (Shampoo + Pincel)</span></li>

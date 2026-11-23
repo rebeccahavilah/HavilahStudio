@@ -34,7 +34,7 @@ export default function Dashboard() {
           ========================================== */}
       <div className="relative rounded-2xl overflow-hidden border border-havilah-gold/20" style={{ minHeight: '340px' }}>
         <img
-          src="/rebecca.jpeg"
+          src="/havilahp.jpg"
           alt="Rebecca Havilah"
           className="absolute inset-0 w-full h-full object-cover object-top"
         />
@@ -75,8 +75,8 @@ export default function Dashboard() {
       <div className="grid grid-cols-3 gap-4">
         {[
           { number: "5+", label: "Anos de experiência" },
-          { number: "500+", label: "Clientes atendidas" },
-          { number: "8", label: "Modelos exclusivos" },
+          { number: "1000+", label: "Clientes atendidas" },
+          { number: "3", label: "Modelos exclusivos" },
         ].map((stat, i) => (
           <div key={i} className="bg-havilah-card border border-havilah-gold/10 rounded-xl p-4 text-center hover:border-havilah-gold/30 transition-all">
             <p className="font-serif text-2xl text-havilah-gold mb-1">{stat.number}</p>

@@ -10,17 +10,17 @@ export const LASH_MODELS: LashModel[] = [
     description: "Volume intenso, criado com leques volumosos. Ideal para mulheres que desejam um olhar marcante, cheio e glamouroso. Recomendado para quem gosta de destaque, maquiagem e presença forte.",
     // Foto com cílios bem preenchidos e volumosos
     imagePlaceholder: "https://images.unsplash.com/photo-1631214500115-598fc2cb8d2d?q=80&w=1000&auto=format&fit=crop",
-    price: 170,
-    maintenancePrice: 90
+    price: 200,
+    maintenancePrice: 
   },
   {
     id: LashStyleId.PRINCESS_EFFECT,
-    name: "Efeito Princesa",
+    name: "Havilah Aura",
     description: "Traz alongamento lateral e elevação estratégica que criam um olhar sedutor, misterioso e levemente “esticado”. Favorece quem tem olhos redondos ou pequenos.",
     // Foto com olhar alongado e elegante
     imagePlaceholder: "https://images.unsplash.com/photo-1597225244660-15a19b6b907c?q=80&w=1000&auto=format&fit=crop",
-    price: 150,
-    maintenancePrice: 90
+    price: 180,
+    maintenancePrice: 100
   },
   {
     id: LashStyleId.VOLUME_HAVILAH,
@@ -28,34 +28,34 @@ export const LASH_MODELS: LashModel[] = [
     description: "Resultado natural, delicado e elegante. Indicado para quem está aplicando cílios pela primeira vez ou busca um efeito discreto. Realça a beleza natural sem exageros.",
     // Foto com cílios bonitos mas naturais
     imagePlaceholder: "https://images.unsplash.com/photo-1512496015851-a90fb38ba796?q=80&w=1000&auto=format&fit=crop",
-    price: 170,
+    price: 180,
     maintenancePrice: 100
   },
   {
     id: LashStyleId.FOX_EYES,
-    name: "Fox Eyes",
+    name: "Havilah Fox",
     description: "Efeito de olhar de raposa, com alongamento nos cantos externos. Deixa o rosto mais harmônico e sofisticado. Excelente para mulheres que gostam de um visual moderno e expressivo.",
     // Foto focada no canto externo e delineado
     imagePlaceholder: "https://images.unsplash.com/photo-1616683693504-3ea7e9ad6fec?q=80&w=1000&auto=format&fit=crop",
-    price: 190,
+    price: 180,
     maintenancePrice: 100
   },
   {
     id: LashStyleId.VOLUME_DIVINE,
-    name: "Volume Divino",
+    name: "Alinhamento",
     description: "Leques mais fechados que criam um aspecto “fresh”, como se tivesse saído da água. Queridinho no Instagram. Perfeito para quem ama tendência e estética contemporânea.",
     // Foto estilo wet look / definido
     imagePlaceholder: "https://images.unsplash.com/photo-1587779782550-908359781b0f?q=80&w=1000&auto=format&fit=crop",
-    price: 140,
-    maintenancePrice: 90
+    price: 50,
+    maintenancePrice: 
   },
   {
     id: LashStyleId.CAPPING,
-    name: "Capping",
+    name: "Alinhamento c/ Henna",
     description: "Combinação equilibrada de naturalidade com volume. Recomendado para quem quer um meio-termo: mais cheio que o clássico, mais leve que o volume russo.",
     // Foto equilibrada
     imagePlaceholder: "https://images.unsplash.com/photo-1583001931096-959e9ad7b535?q=80&w=1000&auto=format&fit=crop",
-    price: 190
+    price: 60
     // Manutenção não especificada
   },
   {
@@ -64,17 +64,17 @@ export const LASH_MODELS: LashModel[] = [
     description: "Abre o olhar e cria sensação de leveza. Modela suavemente e dá um brilho elegante ao olhar. Ótimo para fotos e eventos.",
     // Foto artística e glamurosa
     imagePlaceholder: "https://images.unsplash.com/photo-1620331311520-246422fd82f9?q=80&w=1000&auto=format&fit=crop",
-    price: 230
+    price: 280
     // Manutenção inclusa no combo
   },
   {
     id: LashStyleId.NATURAL_SOFT,
-    name: "Natural Soft",
+    name: "Brown Lamination",
     description: "Efeito extremamente suave, simulando cílios naturais porém mais longos e curvados. Ideal para clientes discretas e minimalistas.",
     // Foto bem clean e soft
     imagePlaceholder: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=1000&auto=format&fit=crop",
-    price: 180,
-    maintenancePrice: 90
+    price: 130,
+    maintenancePrice: 
   }
 ];
 

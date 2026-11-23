@@ -9,17 +9,17 @@ export const APP_SUBTITLE = "por Rebecca Havilah";
 export const LASH_MODELS: LashModel[] = [
   {
     id: LashStyleId.VOLUME_PREMIUM,
-    name: "Havilah Premium",
+    name: "Extensão c/ Led Uv",
     description:
       "Volume intenso, criado com leques volumosos. Ideal para mulheres que desejam um olhar marcante, cheio e glamouroso. Recomendado para quem gosta de destaque, maquiagem e presença forte.",
     imagePlaceholder:
       "https://images.unsplash.com/photo-1583121560115-980f2c2b0a2f?q=80&w=1000&auto=format&fit=crop",
     price: 200,
-    maintenancePrice: 0,
+    maintenancePrice: 120,
   },
   {
     id: LashStyleId.PRINCESS_EFFECT,
-    name: "Havilah Aura",
+    name: "Extensão Tradicional",
     description:
       "Traz alongamento lateral e elevação estratégica que criam um olhar sedutor, misterioso e levemente 'vertical'. Favorece quem tem olhos redondos ou pequenos.",
     imagePlaceholder:
@@ -28,26 +28,7 @@ export const LASH_MODELS: LashModel[] = [
     maintenancePrice: 100,
   },
   {
-    id: LashStyleId.VOLUME_HAVILAH,
-    name: "Volume Havilah",
-    description:
-      "Resultado natural, delicado e elegante. Indicado para quem está aplicando cílios pela primeira vez ou busca um efeito discreto. Realça a beleza natural sem exageros.",
-    imagePlaceholder:
-      "https://images.unsplash.com/photo-1512496015851-a90fb38ba796?q=80&w=1000&auto=format&fit=crop",
-    price: 180,
-    maintenancePrice: 100,
-  },
-  {
-    id: LashStyleId.FOX_EYES,
-    name: "Havilah Fox",
-    description:
-      "Efeito de olhar de raposa, com alongamento nos cantos externos. Deixa o rosto mais harmônico e sofisticado. Excelente para mulheres que gostam de um visual moderno e expressivo.",
-    imagePlaceholder:
-      "https://images.unsplash.com/photo-1616683693504-3ea7e9ad6fec?q=80&w=1000&auto=format&fit=crop",
-    price: 180,
-    maintenancePrice: 100,
-  },
-  {
+    
     id: LashStyleId.VOLUME_DIVINE,
     name: "Alinhamento",
     description:

@@ -9,13 +9,13 @@ export const APP_SUBTITLE = "por Rebecca Havilah";
 export const LASH_MODELS: LashModel[] = [
   {
     id: LashStyleId.VOLUME_PREMIUM,
-    name: "Volume Premium",
+    name: "Havilah Premium",
     description:
       "Volume intenso, criado com leques volumosos. Ideal para mulheres que desejam um olhar marcante, cheio e glamouroso. Recomendado para quem gosta de destaque, maquiagem e presença forte.",
     imagePlaceholder:
       "https://images.unsplash.com/photo-1583121560115-980f2c2b0a2f?q=80&w=1000&auto=format&fit=crop",
     price: 200,
-    maintenancePrice: 100,
+    maintenancePrice: 0,
   },
   {
     id: LashStyleId.PRINCESS_EFFECT,
@@ -34,7 +34,7 @@ export const LASH_MODELS: LashModel[] = [
       "Resultado natural, delicado e elegante. Indicado para quem está aplicando cílios pela primeira vez ou busca um efeito discreto. Realça a beleza natural sem exageros.",
     imagePlaceholder:
       "https://images.unsplash.com/photo-1512496015851-a90fb38ba796?q=80&w=1000&auto=format&fit=crop",
-    price: 190,
+    price: 180,
     maintenancePrice: 100,
   },
   {
@@ -74,12 +74,12 @@ export const LASH_MODELS: LashModel[] = [
       "Abre o olhar e cria sensação de leveza. Modela suavemente e dá um brilho elegante ao olhar. Ótimo para fotos e eventos.",
     imagePlaceholder:
       "https://images.unsplash.com/photo-1583001831049-4e063295d0a1?q=80&w=1000&auto=format&fit=crop",
-    price: 200,
+    price: 280,
     maintenancePrice: "Inclusa no combo",
   },
   {
     id: LashStyleId.NATURAL_SOFT,
-    name: "Laminação Marrom",
+    name: "Brown Lamination",
     description:
       "Efeito extremamente suave, simulando cílios naturais porém mais longos e curvados. Ideal para clientes discretas e minimalistas.",
     imagePlaceholder:
